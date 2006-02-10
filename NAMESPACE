@@ -1,0 +1,84 @@
+import("tframe")
+importFrom("dse1","simulate")
+importFrom("dse1","checkResiduals")
+importFrom("dse2","EstEval")
+importFrom("dse2","distribution")
+
+S3method("predict", "TSFmodel")
+S3method("predict", "TSFestModel")
+
+S3method("diff", "TSFmodel")
+S3method("diff", "TSFestModel")
+S3method("diff", "TSFexplained")
+S3method("diff", "TSFfactors")
+S3method("diff", "factorsEstEval")
+
+#importFrom("stats","loadings")
+export("loadings")
+S3method("loadings", "default")
+S3method("loadings", "TSFmodel")
+S3method("loadings", "TSFestModel")
+
+#export("standardizedLoadings")
+#S3method("standardizedLoadings", "TSFestModel")
+export("DstandardizedLoadings")
+S3method("DstandardizedLoadings", "TSFestModel")
+
+S3method("distribution", "factorsEstEval")
+S3method("checkResiduals", "TSFestModel")
+
+export("factors")
+S3method("factors", "TSFmodel")
+S3method("factors", "TSFestModel")
+S3method("factors", "EstEval")
+
+export("nfactors")
+S3method("nfactors", "TSFmodel")
+S3method("nfactors", "TSFestModel")
+S3method("nfactors", "TSFfactors")
+S3method("nfactors", "EstEval")
+
+export("factorNames")
+S3method("factorNames", "TSFmodel")
+S3method("factorNames", "TSFestModel")
+S3method("factorNames", "TSFfactors")
+S3method("factorNames", "EstEval")
+
+S3method("seriesNames", "TSFestModel")
+
+export("TSFmodel")
+S3method("TSFmodel", "default")
+S3method("TSFmodel", "TSFmodel")
+S3method("TSFmodel", "TSFestModel")
+
+S3method("simulate", "TSFmodel")
+
+export("explained")
+S3method("explained", "TSFestModel")
+S3method("explained", "TSFmodel")
+
+S3method("summary", "TSFestModel")
+S3method("summary", "TSFmodel")
+S3method("summary", "TSFmodelEstEval")
+
+S3method("print", "summary.TSFestModel")
+S3method("print", "summary.TSFmodel")
+S3method("print", "summary.TSFmodelEstEval")
+S3method("tfplot", "TSFmodel")
+S3method("tfplot", "TSFestModel")
+S3method("tfplot", "TSFfactors")
+S3method("tfplot", "TSFexplained")
+S3method("tfplot", "TSFmodelEstEval")
+
+export("LedermannBound")
+export("FAfitStats")
+#export("FAmodelFitStats")
+S3method("FAfitStats", "default")
+S3method("FAfitStats", "TSFestModel")
+
+export("summaryStats")
+S3method("summaryStats", "TSFmodelEstEval")
+
+export("permusign")
+export("estTSF.ML")
+

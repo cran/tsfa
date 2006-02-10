@@ -1,0 +1,33 @@
+\name{nfactors}
+\alias{nfactors}
+\alias{nfactors.TSFmodel}
+\alias{nfactors.TSFestModel}
+\alias{nfactors.TSFfactors}
+\alias{nfactors.EstEval}
+
+\title{Extract the Number of Time Series Factors from an Object}
+\usage{
+    nfactors(x)
+    \method{nfactors}{TSFmodel}(x)
+    \method{nfactors}{TSFestModel}(x)
+    \method{nfactors}{TSFfactors}(x)
+    \method{nfactors}{EstEval}(x)
+}
+\arguments{
+    \item{x}{an object.}
+}
+\description{
+   Extract the number of time series factors from an object.
+}
+
+\value{an integer.}
+
+\seealso{
+   \code{\link{factors}},
+   \code{\link{factorNames}},
+   \code{\link{TSFmodel}},
+}
+\author{Paul Gilbert}
+\concept{TSFA}
+\keyword{ts}
+
