@@ -51,7 +51,7 @@ rownorms  <- sqrt(rowSums(poppar$loadings^2))
 
 KBorth    <- diag(1/rownorms) %*% poppar$loadings
 rotpoppar <- GPFoblq(A = KBorth, Tmat = diag(1, 2), method="quartimin")
-Boblq     <- diag(stds * rownorms) %*% rotpoppar$Lh
+Boblq     <- diag(stds * rownorms) %*% rotpoppar$loadings
 PhiOblq   <- rotpoppar$Phi
 Omega     <- diag(stds * poppar$uniquenesses * stds)
 Psi       <- 0.5 * Omega

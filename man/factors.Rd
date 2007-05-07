@@ -1,14 +1,12 @@
 \name{factors}
 \alias{factors}
 \alias{factors.TSFmodel}
-\alias{factors.TSFestModel}
 \alias{factors.EstEval}
 
 \title{Extract Time Series Factors from an Object}
 \usage{
     factors(x)
     \method{factors}{TSFmodel}(x)
-    \method{factors}{TSFestModel}(x)
     \method{factors}{EstEval}(x)
 }
 \arguments{

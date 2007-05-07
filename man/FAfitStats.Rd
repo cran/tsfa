@@ -1,7 +1,7 @@
 \name{FAfitStats}
 \alias{FAfitStats}
 \alias{FAfitStats.default}
-\alias{FAfitStats.TSFestModel}
+\alias{FAfitStats.TSFmodel}
 
 \encoding{latin1}
 %%\encoding{UTF-8}
@@ -9,8 +9,9 @@
 \usage{
     FAfitStats(object, ...)
     \method{FAfitStats}{default}(object, diff. = TRUE,
-               N=(nrow(object) - diff.), control=list(lower = 0.0001), ...)
-    \method{FAfitStats}{TSFestModel}(object, diff. = TRUE,
+               N=(nrow(object) - diff.), 
+	       control=list(lower = 0.0001, opt=list(maxit=1000)), ...)
+    \method{FAfitStats}{TSFmodel}(object, diff. = TRUE,
                N=(nrow(object$data) - diff.), ...)
 }
 \arguments{
@@ -28,8 +29,8 @@
    function is also used by the summary method for a \code{TSFestModel}.
 }
 \details{
-  In the case of the method for a \code{TSFestModel} the model parameters are 
-  extracted from the \code{TSFestModel} and the 
+  In the case of the method for a \code{TSFmodel} the model parameters are 
+  extracted from the model and the 
   result is a vector of various fit statistics (see below). 
   (Calculations are done by the internal function \code{FAmodelFitStats}.) 
 
@@ -78,7 +79,11 @@
   for each indicator series, models are calculated with \code{factanal} for 
   factors up to the Ledermann bound. No rotation is needed, since rotation does 
   not affect the fit statistics. Values for the saturated model are also
-  appended to facilitate a sequential comparison.
+  appended to facilitate a sequential comparison. 
+  
+  If \code{factanal} does not obtain a satisfactory solution  it may produce an
+  error "unable to optimize from these starting value(s)." This can sometimes be
+  fixed by increasing the \code{opt, maxit} value in the \code{control} list.
   
   The result for the default method is a list with elements
   \describe{
@@ -103,7 +108,7 @@
 \seealso{
    \code{\link{FAmodelFitStats}},
    \code{\link{summary}},
-   \code{\link{summary.TSFestModel}},
+   \code{\link{summary.TSFmodel}},
    \code{\link{summaryStats}},
    \code{\link{LedermannBound}}
 }

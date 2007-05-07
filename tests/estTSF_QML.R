@@ -95,11 +95,12 @@ QML <- estTSF.ML(simBoblq, 2, BpermuteTarget=Boblq, normalize=FALSE)
       23.8594010938091756 , 21.1537553833569625 , 
       39.0593458850729291 , 46.6582984817521478), 2,6))
 
- if( fuzz < max(abs(QML$model$B - tst ))) {
+# if( fuzz < max(abs(QML$model$B - tst ))) {
+ if( fuzz < max(abs(loadings(QML) - tst ))) {
     cat("Calculated value is not the same as test value in test 8. Value:\n")
-    printTestValue(QML$model$B, digits=18)
+    printTestValue(loadings(QML), digits=18)
     cat("difference:\n")
-    print(QML$model$B - tst, digits=18)
+    print(loadings(QML) - tst, digits=18)
     all.ok <- FALSE  
     } 
 
@@ -130,11 +131,11 @@ QML <- estTSF.ML(simBoblq, 2, BpermuteTarget=Boblq, normalize=FALSE)
       -0.0140980078283146574, -0.0087723553274788469, -0.08536058524511414, 
       0.00244781454332796463, 0.00692031286447671815, 0.00363183819429673026), 6, 2))
 
- if( fuzz < max(abs(QML$model$LB - tst ))) {
+ if( fuzz < max(abs(QML$LB - tst ))) {
     cat("Calculated value is not the same as test value in test 8. Value:\n")
-    printTestValue(QML$model$LB, digits=18)
+    printTestValue(QML$LB, digits=18)
     cat("difference:\n")
-    print(QML$model$LB - tst, digits=18)
+    print(QML$LB - tst, digits=18)
     all.ok <- FALSE  
     } 
 

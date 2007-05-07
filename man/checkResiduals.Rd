@@ -1,12 +1,14 @@
-\name{checkResiduals.TSFestModel}
-\alias{checkResiduals.TSFestModel}
+\name{checkResiduals.TSFmodel}
+\alias{checkResiduals.TSFmodel}
 \title{Check Time Series Idiosyncratic Component}
 \usage{
-    \method{checkResiduals}{TSFestModel}(obj, diff.=TRUE, ...)
+    \method{checkResiduals}{TSFmodel}(obj, data=obj$data, diff.=TRUE, ...)
 }
 \arguments{
-    \item{obj}{TSFestModel object for which the idiosyncratic component should be
+    \item{obj}{TSFmodel object for which the idiosyncratic component should be
        examined (as if it were a residual).}
+    \item{data}{data from which the idiosyncratic component should be
+       calculated.}
     \item{diff.}{logical indicating if data and explained should be differenced.}
     \item{...}{arguments to be passed to checkResiduals default methods.}
 }

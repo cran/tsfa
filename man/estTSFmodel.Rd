@@ -1,11 +1,20 @@
-\name{estTSF.ML}
+\name{estTSFmodel}
+\alias{estTSFmodel}
 \alias{estTSF.ML}
 
 \title{Estimate Time Series Factor Model}
 \usage{
+    estTSFmodel(y, p, diff.=TRUE, 
+                est="factanal", 
+		estArgs=list(scores="none", control=list(opt=list(maxit=10000))),
+                rotation=if(p==1) "none" else "quartimin", 
+		rotationArgs=NULL, 
+		GPFargs=list(Tmat=diag(p),normalize=TRUE, eps=1e-5, maxit=1000), 
+		BpermuteTarget=NULL,
+                factorNames=paste("Factor", seq(p)))
     estTSF.ML(y, p, diff.=TRUE,
                 rotation=if(p==1) "none" else "quartimin", 
-		methodArgs=NULL,  
+		rotationArgs=NULL,  
 		normalize=TRUE, eps=1e-5, maxit=1000, Tmat=diag(p),
  		BpermuteTarget=NULL,
                 factorNames=paste("Factor", seq(p)))
@@ -15,10 +24,16 @@
     \item{p}{integer indication number of factors to estimate.}
     \item{diff.}{logical indicating if model should be estimated with 
            differenced data.}
+    \item{est}{character vector indicating the factor 
+         estimation method (currently only factanal is supported).}
+    \item{estArgs}{list passed to as arguments to the estimation function.}
     \item{rotation}{character vector indicating the factor 
          rotation method (see \pkg{GPArotation} for options).}
-    \item{methodArgs}{list passed to \code{GPFoblq}, and then to the rotation method, 
-          specifying arguments for the rotation criteria. See \code{GPFoblq}.}
+    \item{rotationArgs}{list passed to the rotation method, 
+          specifying arguments for the rotation criteria.}
+    \item{GPFargs}{list passed to \code{GPFoblq} or \code{GPForth}, possibly via 
+          the rotation method, specifying arguments for the rotation
+	  optimization. See \code{GPFoblq} and \code{GPForth}.}
     \item{normalize}{Passed to \code{GPFoblq}. \code{TRUE} means do Kaiser normalization before
           rotation and then undo it after completing rotatation. \code{FALSE} means do 
 	  no normalization. See \code{GPFoblq} for other possibilities.}
@@ -40,6 +55,8 @@
     the data, and some information about the estimation.}
 
 \details{
+  The function \code{estTSF.ML} is a wrapper to \code{estTSFmodel}. 
+
   The function \code{estTSF.ML} estimates parameters using standard 
   (quasi) ML factor analysis (on the correlation matrix and then scaled back).
   The function \code{factanal} with no rotation is used to find the initial

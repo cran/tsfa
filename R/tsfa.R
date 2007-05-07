@@ -1,8 +1,29 @@
+#  Notes
+#   An  FAmodel has parameters but not factors. It can
+#     optionally have stats (about estimation).
+#   An  fFAmodel extends an  FAmodel by adding factors.
+#   An  TSFmodel extends an  fFAmodel by time.
 ###################################################
 
-#   Time Series Factor Analysis (Latent Variables)
+#            Factor Analysis 
 
 ###################################################
+
+FAmodel <- function(obj, ...)UseMethod("FAmodel")
+FAmodel.FAmodel <- function(obj, ...) obj #extractor
+
+FAmodel.default <- function(obj,  Omega=NULL, Phi=NULL, LB=NULL, LB.std=NULL,
+   stats=NULL,  ...)
+  {#  obj should be the loadings (hat)B for  x =  B f + e  
+   if(!is.matrix(obj))
+     stop("FAmodel.default requires a loadings matrix (factor loadings) as the first argument.")
+   # do more checking (but only loadings is necessary (for simulation)
+   #if(ncol(obj)!= nrow(Omega))
+   #    stop("dimensions of obj (loadings) and  Omega do not agree.")
+   classed(list(loadings=obj, Omega=Omega, Phi=Phi, LB=LB,  LB.std=LB.std, 
+	   stats=stats), "FAmodel") # constructor
+  }
+
 
 # I don't think this exists really works for namespaces
 # The if also seems to cause some problems for codoc
@@ -11,11 +32,219 @@
   loadings <- function(x)UseMethod("loadings")
 #  }
 
-loadings.TSFmodel <- function(x)x$B
-loadings.TSFestModel <- function(x) loadings(TSFmodel(x))
+loadings.FAmodel <- function(x)x$loadings
+#loadings.fFAmodel <- function(x) NextMethod(x)
+
+factors <- function(x)UseMethod("factors")
+# use predict with data to get factors
+factors.fFAmodel <- function(x) x$f
+
+nfactors <- function(x) UseMethod("nfactors")
+nfactors.FAmodel <- function(x) {ncol(loadings(x))}
+
+factorNames <- function(x) UseMethod("factorNames")
+factorNames.FAmodel     <- function(x) dimnames(loadings(x))[[2]]
+
+coef.FAmodel <- function(object, ...) {c(loadings(object), diag(object$Omega))}
+
+explained <- function(object, ...)UseMethod("explained")
+explained.FAmodel <- function (object, f=factors(object),
+                  names=indicatorNames(object), ...) {
+  # portion of data explained by factors
+  r <- t(loadings(object) %*% t(f))
+  dimnames(r) <- list(NULL, names)
+  r
+  }
+
+LedermannBound  <- function(M) {
+   if (is.matrix(M)) M <- ncol(M)
+   if (1 != length(M)) stop("M must be an integer number of indicator variables.")
+      
+   ## solve (M^2-M) - (2M+1)k + k^2 = 0 for k
+   #r <- polyroot(c(M^2-M, -(2*M+1), 1))
+   #if (any(abs(Im(r)) > 10*.Machine$double.eps))
+   #         warning("LedermannBound has complex solution")
+   #r <- Re(r)
+   #r[(0 <=r) & (r <= M)]
+   if(M <3) return(0)
+   r <- M + 0.5 - (0.5 * sqrt(8*M + 1))
+   #fuzz in next is just to assure rounding errror does not give an non-integer
+   # when result should be integer. (Especially important if floor might result
+   # in the next lower integer.)
+   if (1e-10 > abs(r - round(r))) round(r) else r
+   }
+
+# FAfitStats could be moved here, but needs to be reorganized to use
+#   cov rather than data (as in estFAmodel)
+
+# could add summaryStats 
+
+summary.FAmodel <- function(object, ...)
+ {classed(list(k=nfactors(object), M=nrow(loadings(object)),
+      Snames=indicatorNames(object), Fnames=factorNames(object),
+      Omega=!is.null(object$Omega), 
+      Phi=!is.null(object$Phi), 
+      LB=!is.null(object$LB), 
+      estConverged=object$stats$estConverged, 
+      rotationConverged=object$stats$rotationConverged, 
+      orthogonal=object$stats$orthogonal
+      ), "summary.TSFmodel")
+ }
+
+print.summary.FAmodel <- function (x, ...)
+  {cat(x$k, " factors: ",     x$Fnames, "\n")
+   cat(x$M, " indicators: ",  x$Snames, "\n")
+   cat("Omega ", (if(x$Omega) "is" else "is not"), " specified.\n")
+   cat("Phi   ", (if(x$Phi) "is" else "is not"), " specified.\n")
+   cat("LB    ", (if(x$LB) "is" else "is not"), " specified.\n")
+   if(!is.null(x$estConverged)) cat("loadings estimation ",
+           (if(x$estConverged) "converged.\n" else "did not converge.\n"))
+   if(!is.null(x$rotationConverged)) cat("rotation ",
+           (if(x$rotationConverged) "converged.\n" else "did not converge.\n"))
+   if(!is.null(x$orthogonal)) cat("rotation is ",
+           (if(x$orthogonal) "orthogonal.\n" else "oblique.\n"))
+  }
+
+
+predict.FAmodel <- function(object, data = NULL, factorNames.=factorNames(object), ...){
+      # prediction of factors with data
+      if (is.null(data)) stop("data must be supplied.")
+      r <- data %*% t(object$LB) #hatf
+      dimnames(r) <- list(NULL, factorNames.)
+      r
+      }
+
+permusign <- function(B, Btarget, Phi=NULL) {
+
+# Selects the permutation and signs of the columns of the factor loadings B
+# that resembles the Btarget matrix the most.
+# Phi matrix (cov of factors) may need to be reordered for the permutation.
+  
+  ############################## local functions
+  permute <- function(x){
+     # with thanks to Bill Venables
+     if (length(x) <= 1) as.matrix(x) else{
+  	 M <- NULL
+  	 for (i in seq(length(x))) M <- rbind(M, cbind(x[i], Recall(x[-i])))
+  	 M
+  	 }
+     }
+  signsw <- function(Bprop, Bnew, Btarget){
+     # compare distance of Bprop from Btarget and also Bprop with column 
+     # signs switched. If the best of these is better than Bnew to Btarget
+     #  return the column signs (1 or -1), otherwise return NULL
+     signs <- rep(1, ncol(Bprop))
+     d1 <- colSums((Btarget - Bprop)^2)
+     d2 <- colSums((Btarget + Bprop)^2) # all col signs reversed
+     if ( sum(pmin(d1, d2)) < sum((Btarget - Bprop %*% diag(signs))^2))
+     	signs <- 2 * (d1 < d2) - 1
+     # the fuzz (1e-12) seems to be necessary to avoid rounding error causing
+     # T when things should be equal,with the result that random 
+     #  permutations occur.
+     if (sum((Btarget - Bnew)^2) > 1e-12 +
+         sum((Btarget - Bprop %*% diag(signs))^2) ) signs else NULL
+     }
+
+  ############################## end local functions
+
+  P    <- permute(seq(ncol(B))) # permutation matrix
+  Bnew   <- B
+  PhiNew <- Phi
+  if( ! is.null(Phi)) {
+    for (j in seq(nrow(P))) {
+      Bprop <- B[,P[j,]]
+      signs <- signsw(Bprop, Bnew, Btarget)
+      if(!is.null(signs)){
+  	 #cat(j, ":", P[j,], signs)
+  	 Bnew	<-  Bprop %*% diag(signs)
+  	 PhiNew <-  (Phi[P[j,],P[j,]]) * outer(signs,signs)
+  	 }
+      }
+    }
+  list(loadings=Bnew,Phi=PhiNew)
+}
+
+
+estFAmodel <- function(Sigma, p, n.obs=NA,
+                est="factanal", 
+		estArgs=list(scores="none", control=list(opt=list(maxit=10000))),
+		rotation=if(p==1) "none" else "quartimin", rotationArgs=NULL,
+		GPFargs=list(Tmat=diag(p), normalize=TRUE, eps=1e-5, maxit=1000),
+		BpermuteTarget=NULL,
+                factorNames=paste("Factor", seq(p)),
+                indicatorNames=NULL) {
+  if (1e10 < max(diag(Sigma))/ min(diag(Sigma)) ) warning(
+	 "Data variances are very different. Consider rescaling some indicators.")
+ 
+  stds <- sqrt(diag(Sigma))
+  if(p < 0)  stop("p (number of factors) must be greater than 0,")
+  else if(p == 0) {
+      # zero factors
+      uniquenesses <- diag(1, nrow(Sigma))
+      Omega  <- diag(Sigma)
+      if(est != "factanal") 
+        stop("Currently Omega  is only correct for factanal estimation.")
+      loadings.std <- loadings <- Phi  <- LB <- LB.std <- NULL
+      estConverged <- rotationConverged <- orthogonal <- TRUE
+      }
+  else {
+      z <- do.call(est, c(list(covmat = Sigma, 
+                 factors=p, n.obs=n.obs, rotation="none"), estArgs))
+
+      estConverged <- z$converged
+      
+      uniquenesses <- z$uniquenesses
+       
+      # for debugging compare:  hatOmega - Omega, hatOmega, Omega
+
+      # z$loadings is orth solution
+      if (rotation == "none") {
+         loadings.std <- z$loadings              
+	 Phi  <- NULL
+	 rotationConverged <- TRUE
+	 orthogonal <- TRUE
+ 	 }
+      else {	 
+  	 rotB <- do.call(rotation, c(list(z$loadings), GPFargs, rotationArgs))
+    	 loadings.std <-  rotB$loadings
+	 rotationConverged <- rotB$convergence
+	 orthogonal <- rotB$orthogonal
+     
+    	 # Make sure columns are ordered properly and have the correct signs.
+    	 Phi <- rotB$Phi
+    	 if (! is.null(BpermuteTarget)) {
+    	    z  <- permusign(diag(stds) %*% loadings.std, BpermuteTarget, Phi=Phi)
+    	    loadings.std <- diag(1/stds) %*% z$loadings
+    	    Phi  <- z$Phi
+    	    }
+	 }
+      loadings <- diag(stds) %*% loadings.std
+      dimnames(loadings) <- list(indicatorNames, factorNames)
+
+      ### Compute Bartlett-predicted factor scores 
+      Sigma.std <- if(is.null(Phi)) loadings.std %*% t(loadings.std) + diag(uniquenesses) else
+                        loadings.std %*% Phi %*% t(loadings.std) + diag(uniquenesses)
+      SinvB <- solve(Sigma.std, loadings.std) 
+      LB.std   <- solve(crossprod(loadings.std, SinvB), t(SinvB))
+
+      LB <- LB.std %*% diag(1/stds)
+      dimnames(LB) <- list(factorNames, indicatorNames)
+      }
+  FAmodel(loadings, Omega=diag(stds * uniquenesses * stds), 
+      Phi=Phi, LB=LB, LB.std=LB.std,  
+      stats=list(estConverged=estConverged, rotationConverged=rotationConverged,
+	orthogonal=orthogonal, uniquenesses=uniquenesses, call=match.call()))
+  }
+
+###################################################
+
+#        Time Series Factor Analysis 
+
+###################################################
+
 
 DstandardizedLoadings <- function(x)UseMethod("DstandardizedLoadings")
-DstandardizedLoadings.TSFestModel <- function(x){
+DstandardizedLoadings.TSFmodel <- function(x){
     r <- diag(1/sqrt(diag(cov(diff(x$data))))) %*% loadings(x)
     dimnames(r) <- dimnames(loadings(x))
     r
@@ -35,13 +264,11 @@ DstandardizedLoadings.TSFestModel <- function(x){
 
 TSFmodel <- function(obj, ...)UseMethod("TSFmodel")
 TSFmodel.TSFmodel <- function(obj, ...) obj #extractor
-TSFmodel.TSFestModel <- function(obj, ...) obj$model  #extractor
 
 TSFmodel.default <- function(obj, f=NULL, Omega=NULL, Phi=NULL, LB=NULL,
         positive.data=FALSE, names=NULL, ...)
-  {#  (... further arguments, currently disregarded)
-   #  arg break.points=NULL, not yet supported
-   #  obj should be (hat)B
+  {#  arg break.points=NULL, not yet supported
+   #  obj should be the loadings (hat)B
    #     x =  B f + e  # NB no mean added to give x
    #   vector processes x, f, and e have times series matrices of data so
    #   calculation is eg t(B %*% t(f))
@@ -53,19 +280,23 @@ TSFmodel.default <- function(obj, f=NULL, Omega=NULL, Phi=NULL, LB=NULL,
 
    if(ncol(obj)!=nseries(f))  stop("dimensions of obj (B) and  f do not agree.")
    if(is.null(names)) names <- paste("Series", seq(nrow(obj)))
-   classed(list(B=obj, f=f, Omega=Omega, Phi=Phi, LB=LB, 
+   classed(list(loadings=obj, f=f, Omega=Omega, Phi=Phi, LB=LB, 
 	   positive.data=positive.data,
            names=names,  #break.points=break.points, 
-	   dots=list(...)), "TSFmodel") # constructor
+	   dots=list(...)), c("TSFmodel", "fFAmodel", "FAmodel")) # constructor
   }
 
-simulate.TSFestModel <- function(model, Cov=TSFmodel(model)$Omega, sd=NULL, noise=NULL, 
-	rng=NULL, noise.model=NULL, ...) {
-   simulate(TSFmodel(model), Cov=Cov, sd=sd, noise=noise, 
-	rng=rng, noise.model=noise.model, ...)
-   }
+TSFmodel.FAmodel <- function(obj, f=NULL, positive.data=FALSE, names=NULL, ...)
+  {if(is.null(f)) stop(" f must be specified.")
 
-simulate.TSFmodel <- function(model, Cov=model$Omega, sd=NULL, noise=NULL,  
+   if(ncol(loadings(obj))!=nseries(f))  
+       stop("dimensions of obj loadings and  f do not agree.")
+   if(is.null(names)) names <- paste("Series", seq(nrow(obj$loadings)))
+   classed(append(obj, list(f=f, positive.data=positive.data, names=names,...)),
+          c("TSFmodel", "fFAmodel", "FAmodel")) # constructor
+  }
+
+simulate.TSFmodel <- function(model, f=factors(model), Cov=model$Omega, sd=NULL, noise=NULL,  
 	rng=NULL, noise.model=NULL, ...)
    {#  (... further arguments, currently disregarded)
     # tframe and periods are taken from factors (f) 
@@ -73,31 +304,29 @@ simulate.TSFmodel <- function(model, Cov=model$Omega, sd=NULL, noise=NULL,
     if ( is.null(Cov) & is.null(sd) & is.null(noise) & is.null(noise.model))
       stop("One of Cov, sd, noise, or noise.model, must be specified.")
 
-    p <- if (is.matrix(model$B)) nrow(model$B) else nrow(model$B[[1]])
-    sampleT <- periods(factors(model))
-     noise <- makeTSnoise(periods(model$f), p, 1, noise=noise, rng=rng,
+    p <- nrow(loadings(model))
+    noise <- makeTSnoise(periods(f), p, 1, noise=noise, rng=rng,
                         Cov=Cov, sd=sd, noise.model=noise.model)
 
     #use the calculation in explained but discard the class setting
-    x <- unclass(explained(model)) + noise$w  
+    x <- unclass(explained(model, f=f)) + noise$w  
     if (model$positive.data && any( x < 0 )) {
         warning("negative simulated data values set to zero.")
         x[ x < 0 ] <- 0
         }
     attr(x, "noise") <- noise
     attr(x, "TSFmodel") <- model
-    tframed(x, tf=factors(model), names=seriesNames(model))
+    tframed(x, tf=f, names=seriesNames(model))
 }
 
 
-factors <- function(x)UseMethod("factors")
 factors.TSFmodel <- function(x) classed(x$f, c("TSFfactors", class(x$f)))
-factors.TSFestModel <- function(x) {
-   r <- factors(TSFmodel(x))
-   trueM <- attr(x$data, "TSFmodel")
-   if(!is.null(trueM)) attr(r, "true") <- factors(trueM)
-   r
-   }
+#factors.TSFestModel <- function(x) {
+#   r <- factors(TSFmodel(x))
+#   trueM <- attr(x$data, "TSFmodel")
+#   if(!is.null(trueM)) attr(r, "true") <- factors(trueM)
+#   r
+#   }
 
 
 factors.EstEval  <- function(x)
@@ -108,15 +337,16 @@ factors.EstEval  <- function(x)
             c("factorsEstEval", "EstEval"))
   }
 
+#diff.TSFmodel  <- function (x, ...){
+#  x$f <- diff(x$f)
+#  x 
+#  }
+
+# was diff.TSFestModel
 diff.TSFmodel  <- function (x, ...){
   x$f <- diff(x$f)
-  x 
-  }
-
-diff.TSFestModel  <- function (x, ...){
-  x$model$f <- diff(x$model$f)
-  trueM <- attr(x$data, "TSFmodel")
   x$data <- diff(x$data)
+  trueM <- attr(x$data, "TSFmodel")
   if(!is.null(trueM)){
      trueM$f <- diff(factors(trueM))
      attr(x$data, "TSFmodel") <- trueM
@@ -125,7 +355,7 @@ diff.TSFestModel  <- function (x, ...){
   }
 
 diff.TSFexplained  <- function (x, ...){
-  tf <- tfdiff(tframe(x))
+  tf <- diff(tframe(x))
   r  <- tframed(diff(unclass(x)), tf=tf)
   d  <- attr(x, "data")
   if(!is.null(d)) attr(r, "data") <- tframed(diff(d), tf=tf)
@@ -133,7 +363,7 @@ diff.TSFexplained  <- function (x, ...){
   }
 
 diff.TSFfactors  <- function (x, ...){
-  tf <- tfdiff(tframe(x))
+  tf <- diff(tframe(x))
   r <- tframed(diff(unclass(x)), tf=tf)
   truef <- attr(x, "true")
   if(!is.null(truef)) attr(r, "true") <- tframed(diff(unclass(truef)), tf=tf)
@@ -148,27 +378,19 @@ diff.factorsEstEval  <- function (x, ...){
             c("factorsEstEval", "EstEval"))
   }
 
-coef.TSFmodel    <- function(object, ...) {c(object$B, diag(object$Omega))}
-coef.TSFestModel <- function(object, ...) {coef(TSFmodel(object))}
-
-nfactors <- function(x) UseMethod("nfactors")
-nfactors.TSFmodel <- function(x) {nseries(factors(x))}
-nfactors.TSFestModel <- function(x) {nfactors(TSFmodel(x))}
 nfactors.EstEval <- function(x) {nfactors(x$truth)}
 nfactors.TSFfactors <- function(x) {nseries(x)}
 
-seriesNames.TSFestModel <- function(x) {seriesNames(x$data)}
 seriesNames.TSFmodel <- function(x) {x$names}
 
-factorNames <- function(x) UseMethod("factorNames")
-factorNames.TSFmodel    <- function(x) seriesNames(factors(x))
-factorNames.TSFestModel <- function(x) factorNames(TSFmodel(x))
 factorNames.EstEval     <- function(x) factorNames(x$truth)
 factorNames.TSFfactors     <- function(x) seriesNames(x)
 
 
+tframe.TSFmodel <- function(x) tframe(x$f)
 
-tfplot.TSFmodel <- function(x,..., tf=tfspan(x), start=tfstart(tf), end=tfend(tf), 
+tfplot.TSFmodel <- function(x,..., tf=tfspan(x , ...),   
+      start=tfstart(tf), end=tfend(tf), 
       series=seq(nfactors(x)),
       Title="Model factors", 
       lty = 1:5, lwd = 1, pch = NULL, col = 1:6, cex = NULL,
@@ -183,9 +405,10 @@ tfplot.TSFmodel <- function(x,..., tf=tfspan(x), start=tfstart(tf), end=tfend(tf
 	par=par, mar=mar, reset.screen=reset.screen)
    }
 
-tfplot.TSFestModel <- function(x,...)  tfplot(factors(x), ...)
+#tfplot.TSFestModel <- function(x,...)  tfplot(factors(x), ...)
 
-tfplot.TSFfactors <- function(x,..., tf=tfspan(x), start=tfstart(tf), end=tfend(tf), 
+tfplot.TSFfactors <- function(x,..., tf=tfspan(x , ...),  
+      start=tfstart(tf), end=tfend(tf), 
       series=seq(nfactors(x)),
       Title="Estimated factors (dashed) and true (solid)", 
       lty = c("dashed", "solid"), lwd = 1, pch = NULL, col = 1:6, cex = NULL,
@@ -202,7 +425,7 @@ tfplot.TSFfactors <- function(x,..., tf=tfspan(x), start=tfstart(tf), end=tfend(
    }
 
 
-tfplot.TSFexplained <- function(x,..., tf=tfspan(x), start=tfstart(tf), end=tfend(tf), 
+tfplot.TSFexplained <- function(x,..., tf=tfspan(x, ...), start=tfstart(tf), end=tfend(tf), 
       series=seq(nseries(x)),
       Title="Explained (dashed) and actual data (solid)", 
       lty = c("dashed", "solid"), lwd = 1, pch = NULL, col = 1:6, cex = NULL,
@@ -220,26 +443,11 @@ tfplot.TSFexplained <- function(x,..., tf=tfspan(x), start=tfstart(tf), end=tfen
   }
 
 
-LedermannBound  <- function(M) {
-   if (is.matrix(M)) M <- ncol(M)
-   if (1 != length(M)) stop("M must be an integer number of indicator variables.")
-   
-   # this works if only the biggest integer solution is needed.
-   #max(seq(M)[(M - seq(M))^2 >= M + seq(M)])
-   
-   # solve (M^2-M) - (2M+1)k + k^2 = 0 for k
-   r <- polyroot(c(M^2-M, -(2*M+1), 1))
-   if (any(Im(r) > .Machine$double.eps))
-            warning("LedermannBound has complex solution")
-   r <- Re(r)
-   r[(0 <=r) & (r <= M)]
-   }
-
 FAfitStats <- function(object, ...)UseMethod("FAfitStats")
 
 FAfitStats.default <- function(object, diff.=TRUE, 
-                           N=(nrow(object) - diff.), 
-			   control=list(lower = 0.0001), ...) {
+                N=(nrow(object) - diff.), 
+		control=list(lower = 0.0001, opt=list(maxit=1000)), ...) {
     if (!is.matrix(object)) stop("FAfitStats.default expects a matrix object.")
     corDX  <- cor(if (diff.) diff(object) else object)
     #covDX  <- cov(if (diff.) diff(object) else object)
@@ -283,12 +491,15 @@ FAfitStats.default <- function(object, diff.=TRUE,
                    paste((0:maxfact)[Hey], collapse=" "), " factor model(s)")
 
     # saturated model
-    k <- maxfact
     M <- nvar
-    nparc <- M * k + M - (k *(k-1))/2 # no. of param's corrected for rotation
+    #k <- maxfact
+    #nparc <- M * k + M - (k *(k-1))/2 # no. of param's corrected for rotation
+    # above is for largest actual model, but saturated model may correspond
+    # to a non-integer Ledermann bound
+    nparc <- M *(M+1)/2 
     fitStats <- cbind(fitStats, c(
         0,0,NA,0,         # chisq=0, df=0, pval=na, delta=0
-        NA,1,1,  NA,      # RMSEA=na, RNI=1, CFI=1, MCI=na
+        NA,1,1,1,         # RMSEA=na, RNI=1, CFI=1, MCI=1
         1,1,0,            # GFI=1, AGFI=1, AIC=0
         (1 + log(N)) * nparc,  # CAIC
         log(N) * nparc,        # SIC
@@ -309,12 +520,12 @@ FAfitStats.default <- function(object, diff.=TRUE,
     
     nm <- dimnames(fitStats)[[2]]
     dimnames(seqfitStats) <- list(c("chisq", "df", "pval"), 
-                                  paste(nm[-1], "vs", nm[-length(nm)]))
+                                  paste(nm[-length(nm)], "vs", nm[-1]))
         
     list(fitStats=fitStats, seqfitStats=seqfitStats)  #, OmegaTot= OmegaTot)
     }
 
-FAfitStats.TSFestModel <- function(object, diff.=TRUE,
+FAfitStats.TSFmodel <- function(object, diff.=TRUE,
                              N=(nrow(object$data) - diff.), ...) {
     # This uses unstandardized B and Omega (and covDX rather than corDX).
     # This should be the same as standardized for MLE, but not for other
@@ -323,7 +534,7 @@ FAfitStats.TSFestModel <- function(object, diff.=TRUE,
     #  differene in simple tests. Might consider using both.
     
     X <- if(diff.) diff(object$data) else object$data
-    FAmodelFitStats(loadings(object), object$model$Phi, diag(object$model$Omega),
+    FAmodelFitStats(loadings(object), object$Phi, diag(object$Omega),
                    cov(X), N)
     } 
 
@@ -436,32 +647,8 @@ FAmodelFitStats <- function(B, Phi, omega, S, N) {
   r
 }
 
-
 summary.TSFmodel <- function(object, ...)
- {classed(list(k=nfactors(object), M=nrow(object$B),
-      Snames=seriesNames(object), Fnames=factorNames(object),
-      N=periods(factors(object)), S=start(factors(object)), E=end(factors(object)),
-      Omega=!is.null(object$Omega), 
-      Phi=!is.null(object$Phi), 
-      LB=!is.null(object$LB), 
-      positive.data=object$positive.data
-      ), "summary.TSFmodel")
-
- }
-
-print.summary.TSFmodel <- function (x, ...)
-  {cat(x$k, " factors: ",     x$Fnames, "\n")
-   cat(x$M, " indicators: ",  x$Snames, "\n")
-   cat("factors have ", x$N, " periods from:", x$S, " to ", x$E, "\n")
-   cat("Omega ", (if(x$Omega) "is" else "is not"), " specified.\n")
-   cat("Phi   ", (if(x$Phi) "is" else "is not"), " specified.\n")
-   cat("LB    ", (if(x$LB) "is" else "is not"), " specified.\n")
-   cat("positive.data ", (if(x$positive.data) "is" else "is not"), " specified.\n")
-  }
-
-summary.TSFestModel <- function(object, ...)
- {
-  fitStats <- FAfitStats(object)
+ {fitStats <- FAfitStats(object)
   est  <- TSFmodel(object)
    
   barx     <- colMeans(object$data)
@@ -476,29 +663,36 @@ summary.TSFestModel <- function(object, ...)
   if (is.null(true)) 
       B.true <- hatk.true <- hatDk.true <- NULL 
   else  {
-      B.true     <- true$B
+      B.true     <- true$loadings
       hatk.true  <- colMeans(true$f)
       hatDk.true <- colMeans(diff(factors(true)))
       }
   
-  classed(list(Snames=seriesNames(object),Fnames=factorNames(est),
-      fitStats=fitStats, B.estimate=est$B,   B.true=B.true,
+  classed(list(
+      N=periods(factors(object)), S=start(factors(object)), E=end(factors(object)),
+      Snames=seriesNames(object),Fnames=factorNames(est),
+      fitStats=fitStats, B.estimate=est$loadings,   B.true=B.true,
       #stdB.estimate=standardizedLoadings(object), 
       DstdB.estimate=DstandardizedLoadings(object),
       barDx=barDx, barDx.est=barDx.est,   barx=barx,  barx.est=barx.est,
       hatDk=hatDk, hatDk.true=hatDk.true, hatk=hatk,  hatk.true=hatk.true),
-	  "summary.TSFestModel")
+	  "summary.TSFmodel")
   }
 
-print.summary.TSFestModel <- function (x, ...)
-  {cat("     Estimated loadings:\n"); print(x$B.estimate)
+
+   #positive.data=object$positive.data
+   #cat("positive.data ", (if(x$positive.data) "is" else "is not"), " specified.\n")
+
+print.summary.TSFmodel <- function (x, ...)
+  {cat("factors have ", x$N, " periods from:", x$S, " to ", x$E, "\n")
+   cat("     Estimated loadings:\n"); print(x$loadings.estimate)
    cat("\n     Standardized (using differenced data covariance):\n")
    print(x$DstdB.estimate)
    #cat("\n     Standardized (using undifferenced data covariance):\n")
    #print(x$stdB.estimate) 
-   if (!is.null(x$B.true))
-     {cat("\n   true loadings:\n"); print(x$B.true)
-      cat("\n   loadings estimation error:\n"); print(x$B.estimate - x$B.true)
+   if (!is.null(x$loadings.true))
+     {cat("\n   true loadings:\n"); print(x$loadings.true)
+      cat("\n   loadings estimation error:\n"); print(x$loadings.estimate - x$loadings.true)
      }
 
 
@@ -559,19 +753,14 @@ distribution.factorsEstEval <- function (obj, ..., bandwidth = "nrd0",
     on.exit(par(old.par))
     if (cumulate)
        for (i in 1:ncol(truth))
-         {if (is.R())
-	    {rd <- density(c(r[,,i]), bw = bandwidth)
-             rdy <- rd$y
-	     for (rx in obr)
+         {rd <- density(c(r[,,i]), bw = bandwidth)
+          rdy <- rd$y
+	  for (rx in obr)
 	         rdy <- cbind(rdy, density(c(rx[,,i]), bw = bandwidth)$y)
-            }
-	  else 
-	    {rd <- ksmooth(r[,, i], bandwidth = bandwidth)
-	     rdy <- rd$y
-	    }
 	  matplot(rd$x, rdy, type = "l",
 	     ylab = "density", xlab = paste(xlab, i), main = "")
-          if (i == 1) title(main = Title)
+          if(!is.null(Title) && (i==1) && (is.null(options()$PlotTitles)
+                || options()$PlotTitles)) title(main = Title)
 	 }
     else
       {rd <- apply(r,c(2,3), FUN="var")^0.5
@@ -581,10 +770,10 @@ distribution.factorsEstEval <- function (obj, ..., bandwidth = "nrd0",
     invisible()
 }
 
-checkResiduals.TSFestModel <- function (obj, diff.=TRUE, ...) {
-	res <- if (diff.) diff(explained(obj)) - diff(obj$data)
-	           else explained(obj) - obj$data
-	seriesNames(res) <- seriesNames(obj$data)
+checkResiduals.TSFmodel <- function (obj, data=obj$data, diff.=TRUE, ...) {
+	res <- if (diff.) diff(explained(obj)) - diff(data)
+	           else explained(obj) - data
+	seriesNames(res) <- seriesNames(data)
 	cat("residual covariance matrix\n")
 	cv <- cov(res)
 	print(cv)
@@ -592,56 +781,6 @@ checkResiduals.TSFestModel <- function (obj, diff.=TRUE, ...) {
 	cat("sum of abs (off-diag of cov): ", sum(abs(cv - diag(cv))), "\n")
 	checkResiduals(res, ...)
 }
-
-
-permusign <- function(B, Btarget, Phi=diag(1,ncol(B))) {
-
-# Selects the permutation and signs of the columns of the factor loadings B
-# that resembles the Btarget matrix the most.
-# Phi matrix (cov of factors) may need to be reordered for the permutation.
-  
-  ############################## local functions
-  permute <- function(x){
-     # with thanks to Bill Venables
-     if (length(x) <= 1) as.matrix(x) else{
-  	 M <- NULL
-  	 for (i in seq(length(x))) M <- rbind(M, cbind(x[i], Recall(x[-i])))
-  	 M
-  	 }
-     }
-  signsw <- function(Bprop, Bnew, Btarget){
-     # compare distance of Bprop from Btarget and also Bprop with column 
-     # signs switched. If the best of these is better than Bnew to Btarget
-     #  return the column signs (1 or -1), otherwise return NULL
-     signs <- rep(1, ncol(Bprop))
-     d1 <- colSums((Btarget - Bprop)^2)
-     d2 <- colSums((Btarget + Bprop)^2) # all col signs reversed
-     if ( sum(pmin(d1, d2)) < sum((Btarget - Bprop %*% diag(signs))^2))
-     	signs <- 2 * (d1 < d2) - 1
-     # the fuzz (1e-12) seems to be necessary to avoid rounding error causing
-     # T when things should be equal,with the result that random 
-     #  permutations occur.
-     if (sum((Btarget - Bnew)^2) > 1e-12 +
-         sum((Btarget - Bprop %*% diag(signs))^2) ) signs else NULL
-     }
-
-  ############################## end local functions
-
-  P    <- permute(seq(ncol(B))) # permutation matrix
-  Bnew   <- B
-  PhiNew <- Phi
-  for (j in seq(nrow(P))) {
-    Bprop <- B[,P[j,]]
-    signs <- signsw(Bprop, Bnew, Btarget)
-    if(!is.null(signs)){
-       #cat(j, ":", P[j,], signs)
-       Bnew   <-  Bprop %*% diag(signs)
-       PhiNew <-  (Phi[P[j,],P[j,]]) * outer(signs,signs)
-       }
-    }
-  list(loadings=Bnew,Phi=PhiNew)
-}
-
 
 
 summaryStats <- function(object, ...) UseMethod("summaryStats")
@@ -653,7 +792,7 @@ summaryStats.TSFmodelEstEval <- function(object, ...) {
 
   meanhatf <- sdhatf <- meanhatDf <- sdhatDf <- meanhatPCf <- 
               sdhatPCf <- meanhatB <- sdhatB <- 
-	      factanalConverged <- rotationConverged <- 0
+	      estConverged <- rotationConverged <- 0
 
   for (m in object$result) { 
       meanhatf  <- meanhatf   + factors(m)
@@ -662,37 +801,38 @@ summaryStats.TSFmodelEstEval <- function(object, ...) {
       sdhatDf   <- sdhatDf    + diff(factors(m))^2
       meanhatPCf<- meanhatPCf + percentChange(factors(m))
       sdhatPCf  <- sdhatPCf   + percentChange(factors(m))^2
-      meanhatB  <- meanhatB   + TSFmodel(m)$B
-      sdhatB	<- sdhatB     + TSFmodel(m)$B^2
-      if (!is.null(TSFmodel(m)$dots$factanalConverged) && !TSFmodel(m)$dots$factanalConverged)
-          factanalConverged <- factanalConverged + 1
+      meanhatB  <- meanhatB   + TSFmodel(m)$loadings
+      sdhatB	<- sdhatB     + TSFmodel(m)$loadings^2
+      if (!is.null(TSFmodel(m)$dots$estConverged) && !TSFmodel(m)$dots$estConverged)
+          estConverged <- estConverged + 1
       if (!is.null(TSFmodel(m)$dots$rotationConverged) && !TSFmodel(m)$dots$rotationConverged)
           rotationConverged <- rotationConverged + 1
       }
  
   true <- factors(object$truth)
   tf <- tframe(true)
+  dtf <- tframe(diff(true))
   
-  meanhatf   <- tframed(meanhatf /N, tf)
-  meanhatDf  <- meanhatDf /N
+  meanhatf   <- meanhatf   /N
+  meanhatDf  <- meanhatDf  /N
   meanhatPCf <- meanhatPCf /N
-  meanhatB   <- meanhatB /N
+  meanhatB   <- meanhatB   /N
  
-  sdhatf   <- tframed(sqrt(sdhatf /N - meanhatf^2), tf)
+  sdhatf   <- sqrt(sdhatf   /N - meanhatf^2)
   sdhatDf  <- sqrt(sdhatDf  /N - meanhatDf^2)
   sdhatPCf <- sqrt(sdhatPCf /N - meanhatPCf^2)
   sdhatB   <- sqrt(sdhatB   /N - meanhatB^2)
   
-  list(true=true, Btrue=TSFmodel(object$truth)$B,
-  	meanhatf   =  meanhatf, 
-  	meanhatDf  =  meanhatDf, 
-  	meanhatPCf =  meanhatPCf, 
-  	meanhatB   =  meanhatB,   
-  	sdhatf     =  sdhatf,	
-  	sdhatDf    =  sdhatDf,  
-  	sdhatPCf   =  sdhatPCf, 
-  	sdhatB     =  sdhatB,
-        factanalConverged = factanalConverged,
+  list(true=true, Btrue=TSFmodel(object$truth)$loadings,
+  	meanhatf   =  tframed(meanhatf,   tf), 
+  	meanhatDf  =  tframed(meanhatDf, dtf), 
+  	meanhatPCf =  tframed(meanhatPCf,dtf), 
+  	meanhatB   =          meanhatB,   
+  	sdhatf     =  tframed(sdhatf,     tf),	
+  	sdhatDf    =  tframed(sdhatDf,   dtf),  
+  	sdhatPCf   =  tframed(sdhatPCf,  dtf), 
+  	sdhatB     =          sdhatB,
+        estConverged = estConverged,
         rotationConverged = rotationConverged)
   }
 
@@ -709,7 +849,7 @@ summary.TSFmodelEstEval <- function(object, ...) {
       meanSDhatPCf    = colMeans(sm$sdhatPCf),
       meanhatB.error  = sm$meanhatB - sm$Btrue, 
       SDhatB          = sm$sdhatB,
-      factanalConverged = sm$factanalConverged,
+      estConverged = sm$estConverged,
       rotationConverged = sm$rotationConverged), "summary.TSFmodelEstEval")
   }
 
@@ -720,15 +860,24 @@ print.summary.TSFmodelEstEval <- function(x, digits = options()$digits, ...) {
   cat("\n    mean %change hat{f} error\n");  print(x$meanhatPCf.error,  digits=digits)
   cat("\n    mean hat{B} error") ; print(x$meanhatB.error, digits=digits) 
   cat("\n      SD hat{B}")       ; print(x$SDhatB, digits=digits) 
-  cat("\n    Estimates NOT converged: ", x$factanalConverged) 
+  cat("\n    Estimates NOT converged: ", x$estConverged) 
   cat("\n    Rotations NOT converged: ", x$rotationConverged) 
   cat("\n") 
   invisible(x)
   }
 
 
-tfplot.TSFmodelEstEval <- function(x, diff.=FALSE,  percentChange.=FALSE,
-        PCcentered.=FALSE, summary.=TRUE, ...) {
+tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfend(tf), 
+		 series=seq(nseries(factors(x))),
+		 Title="Monte Carlo Results", 
+		 lty = c("solid", "dotdash", "dashed",  "dashed"), lwd = 1, pch = NULL, 
+		 col = c("black", "red", "red", "red"), cex = NULL,
+		 xlab=NULL, 
+		 ylab=seriesNames(factors(x$truth)), 
+		 xlim = NULL, ylim = NULL,
+		 graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE,
+		 diff.=FALSE,  percentChange.=FALSE,
+                 PCcentered.=FALSE, summary.=TRUE) {
 
    #if summary. is FALSE then all of the factors are plotted,
    # otherwise the mean and 1 SD bounds are plotted as follows:
@@ -740,97 +889,111 @@ tfplot.TSFmodelEstEval <- function(x, diff.=FALSE,  percentChange.=FALSE,
    true <- factors(x$truth)
    
    if(!summary.) {
-     tfplot(factors(x), tf = tframe(true),
+     if(is.null(tf)) tf <- tframe(true)
+     tfplot(factors(x), tf = tf, start=start, end=end, series=series,
         truth = true,
-        Title = "Estimated (and true) results",
-      ylab = seriesNames(truth), remove.mean = FALSE, graphs.per.page = 5,
+        Title = Title,
+      ylab = seriesNames(true), remove.mean = FALSE, graphs.per.page = 5,
        mar = par()$mar, reset.screen = TRUE, ...)
       } 
    else {
       sm <- summaryStats(x)
 
       if(diff.) { # factor difference
-    	  tfplot(diff(true),
+          df <- diff(true)
+	  if(is.null(tf)) tf <- tframe(df)
+    	  tfplot(df,
     		 sm$meanhatDf, 
     		 sm$meanhatDf  + 1.96 * sm$sdhatDf,  
-    		 sm$meanhatDf  - 1.96 * sm$sdhatDf)
+    		 sm$meanhatDf  - 1.96 * sm$sdhatDf,
+		Title=Title,
+                tf=tf, start=start, end=end, series=series,  
+                lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
+                xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
+		graphs.per.page=graphs.per.page, 
+		par=par, mar=mar, reset.screen=reset.screen)
     	  }
       else if(percentChange.){ # factor growth rates
-    	  tfplot(percentChange(true),
+          pc <- percentChange(true)
+	  if(is.null(tf)) tf <- tframe(pc)
+    	  tfplot(pc,
     		 sm$meanhatPCf, 
     		 sm$meanhatPCf  + 1.96 * sm$sdhatPCf,  
-    		 sm$meanhatPCf  - 1.96 * sm$sdhatPCf)
+    		 sm$meanhatPCf  - 1.96 * sm$sdhatPCf,
+		Title=Title,
+                tf=tf, start=start, end=end, series=series,  
+                lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
+                xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
+		graphs.per.page=graphs.per.page, 
+		par=par, mar=mar, reset.screen=reset.screen)
     	  }
       else if(PCcentered.){ # factor growth rates: bias (clearer picture?)
     	  growth <- percentChange(true)
+          if(is.null(tf)) tf <- tframe(growth)
 	  tfplot(sm$meanhatPCf - growth, 
     		sm$meanhatPCf  + 1.96 * sm$sdhatPCf - growth, 
-    		sm$meanhatPCf  - 1.96 * sm$sdhatPCf - growth)
+    		sm$meanhatPCf  - 1.96 * sm$sdhatPCf - growth,
+		Title=Title,
+                tf=tf, start=start, end=end, series=series,  
+                lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
+                xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
+		graphs.per.page=graphs.per.page, 
+		par=par, mar=mar, reset.screen=reset.screen)
           }
       else { # factors
+          if(is.null(tf)) tf <- tframe(true)
     	  tfplot(true,
     		 sm$meanhatf, 
     		 sm$meanhatf  + 1.96 * sm$sdhatf, 
-    		 sm$meanhatf  - 1.96 * sm$sdhatf)
+    		 sm$meanhatf  - 1.96 * sm$sdhatf,
+		Title=Title,
+                tf=tf, start=start, end=end, series=series,  
+                lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
+                xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
+		graphs.per.page=graphs.per.page, 
+		par=par, mar=mar, reset.screen=reset.screen)
     	  }
       }
    invisible(x)
    }
 
 
-predict.TSFmodel <- function(object, newdata = NULL, factorNames.=factorNames(object), ...){
-      # prediction of factors with new data
-      if (is.null(newdata)) stop("newdata must be supplied.")
-      LB <- object$LB
-      tframed(newdata %*% t(LB), tframe(newdata), names=factorNames.) #hatf
+predict.TSFmodel <- function(object, data = object$data, factorNames.=factorNames(object), ...){
+      # prediction of factors with data
+      if (is.null(data)) stop("data must be supplied.")
+      tframed(data %*% t(object$LB), tframe(data), names=factorNames.) #hatf
       }
 
-predict.TSFestModel <- function(object, newdata=NULL, factorNames.=factorNames(object), ...){
-      if (is.null(newdata)) newdata <- object$data
-      LB <- object$model$LB
-      tframed(newdata %*% t(LB), tframe(newdata), names=factorNames.) #hatf
-      }
 
-explained <- function(object, ...)UseMethod("explained")
-explained.TSFestModel <- function (object, ...)
- {r <- explained(TSFmodel(object), names=seriesNames(object$data), ...) 
-  attr(r, "data") <- object$data
-  r
- }
+#explained.TSFestModel <- function (object, ...)
+# {r <- explained(TSFmodel(object), names=seriesNames(object$data), ...) 
+#  attr(r, "data") <- object$data
+#  r
+# }
 
-explained.TSFmodel <- function (object, names=object$names, ...) {
+#explained.TSFmodel <- function (object, f=factors(object),
+#                  names=seriesNames(object), ...) {
+#  # portion of data explained by factors
+#  classed(tframed(t(loadings(object) %*% t(f)), tf=tframe(f), names=names),
+#     "TSFexplained") 
+#  }
+
+explained.TSFmodel <- function (object, f=factors(object),
+                  names=seriesNames(object), ...) {
   # portion of data explained by factors
-  f <- object$f
-  if (is.matrix(object$B)) x <- t(object$B %*% t(f))
-#  else {warning("this part of explained.TSFmodel is not tested.")
-#	if (is.list(B)  &&  !is.list(break.points))
-#	     stop("a list of break.points must be specified for a list of B.")
-#	if (length(break.points)+1 != length(B))
-#	     stop("the list of break.points must be one shorter than the list of B.")
-#	x <- NULL
-#	starts <- list(tfstart(f))
-#	for (i in break.points) starts <- append(starts, list(i))
-#	ends <- list()
-#	for (i in break.points)
-#	   ends <- append(ends, list(addDate(i, -1, tffrequency(f))))
-#	ends <- append(ends, list(tfend(f)))
-#	for (i in seq(length(B))) x <- rbind(x,
-#	 t(B[[i]] %*%  t(tfwindow(f, start=starts[[i]], end=ends[[i]]))) )
-#	}
-  x <- tframed(x, tf=tframe(f), names=names) 
-  classed(x, c("TSFexplained", class(x))) 
+  tframed(t(loadings(object) %*% t(f)), tf=tframe(f), names=names)
   }
-
 
 
 #######################################
 
 estTSF.ML <- function(y, p, diff.=TRUE, 
                       rotation=if(p==1) "none" else "quartimin", 
-		      methodArgs=NULL, 
+		      rotationArgs=NULL, 
 		      normalize=TRUE, eps=1e-5, maxit=1000, Tmat=diag(p),
 		      BpermuteTarget=NULL,
                       factorNames=paste("Factor", seq(p))) {
+   # it would be better to have GPFargs=list(Tmat=Tmat, normalize=normalize, eps=eps, maxit=maxit)
 
       # Estimate parameters using standard (quasi) ML factor analysis
       # (on the correlation matrix and then scaled back).
@@ -838,79 +1001,47 @@ estTSF.ML <- function(y, p, diff.=TRUE,
       # the solution. Both standardized and not can be calculated after.
       # With non ML methods this solutions may differ (and working with cov  
       # rather than cor is probabably better.
+   
+   estTSFmodel(y, p, diff.=diff., 
+        est="factanal", 
+	estArgs=list(scores="none", control=list(opt=list(maxit=10000))),
+        rotation=rotation, 
+	rotationArgs=rotationArgs, 
+	GPFargs=list(Tmat=diag(p), normalize=normalize, eps=eps, maxit=maxit),
+	BpermuteTarget=BpermuteTarget,
+        factorNames=factorNames)
+   }
 
+estTSFmodel <- function(y, p, diff.=TRUE, 
+                est="factanal", 
+		estArgs=list(scores="none", control=list(opt=list(maxit=10000))),
+                rotation=if(p==1) "none" else "quartimin", 
+		rotationArgs=NULL, 
+		GPFargs=list(Tmat=diag(p),normalize=TRUE, eps=1e-5, maxit=1000), 
+		BpermuteTarget=NULL,
+                factorNames=paste("Factor", seq(p))) {
       if (p < 1) stop("number of factors must be a positive integer.")
-     
+      indicatorNames <- seriesNames(y)
       zz <- if (diff.) diff(y) else y
       zz <- sweep(zz,2,colMeans(zz), "-")
-      #Sigma <- cov(zz) which is the same as
       Sigma  <- crossprod(zz)/(periods(zz) - 1)
- 
-      z <- factanal(covmat = Sigma, factors=p, scores="none",
-    			  rotation="none", n.obs=(periods(y) - diff.))
-      #  above should be the same as
-      #  z <- factanal(if(diff.) diff(y) else y, factors=p,
-      #	                 scores="none", rotation="none")
-
-      factanalConverged <- z$converged
       
-      stds	<- sd(if (diff.) diff(y) else y)
-      uniquenesses <- z$uniquenesses
-      hatOmega  <- stds * uniquenesses * stds
-       
-      # for debugging compare:  hatOmega - Omega, hatOmega, Omega
+      z <- estFAmodel(Sigma, p, n.obs=(periods(y) - diff.),
+                est="factanal", 
+		estArgs=estArgs,
+                rotation=rotation, rotationArgs=rotationArgs, 
+		GPFargs=GPFargs,
+		BpermuteTarget=BpermuteTarget,
+                factorNames=factorNames,
+                indicatorNames=indicatorNames) 
 
-      # z$loadings is orth solution
-      if (rotation == "none") {
-         hatB <- diag(stds) %*% z$loadings              
-	 Phi  <- NULL
-	 rotationConverged <- NULL
- 	 }
-      else {	 
-    	 rotB <- GPFoblq(z$loadings, Tmat=Tmat, 
-			 normalize=normalize, eps=1e-5, maxit=1000,
-    	                 method=rotation, methodArgs=methodArgs)
-    	 hatB <- diag(stds) %*% rotB$Lh
-	 rotationConverged <- rotB$convergence
-     
-    	 # Make sure columns are ordered properly and have the correct signs.
-    	 Phi <- rotB$Phi
-    	 if (! is.null(BpermuteTarget)) {
-    	    z  <- permusign(hatB, BpermuteTarget, Phi=Phi)
-    	    hatB <- z$loadings
-    	    Phi  <- z$Phi
-    	    }
-	 }
-      dimnames(hatB) <- list(seriesNames(y), factorNames)
-
-      ### Compute Bartlett-predicted factor scores 
-      #BO <- t(hatB) %*% diag(1/hatOmega) or
-      #BO <- crossprod(hatB, diag(1/hatOmega) )
-      #LB   <- solve(BO %*% hatB, BO)
-      # above is the same as
-      #LB   <- solve(t(hatB) %*% solve(hatOmega) %*% hatB) %*%
-      #              t(hatB) %*% solve(hatOmega) 
-      
-      Sigma <- if(is.null(Phi)) hatB %*% t(hatB) + diag(hatOmega) else
-                        hatB %*% Phi %*% t(hatB) + diag(hatOmega)
-      BO <- crossprod(hatB, solve(Sigma) )
-      LB   <- solve(BO %*% hatB, BO)
-
-      dimnames(LB) <- list(factorNames, seriesNames(y))
-
-      model <- TSFmodel(hatB, 
-                        f=tframed(y %*% t(LB), tframe(y), names=factorNames), #hatf
-			Omega=diag(hatOmega), Phi=Phi,
-			LB=LB,   
-	                positive.data=all(0<y), 
-		        factanalConverged=factanalConverged,
-		        rotationConverged=rotationConverged )
-      # factanalConverged and rotationConverged should really be in est rather
-      #  than model, but then that has to be passed back from EstEval
-      classed(list(model=model, data=y, 
-             estimates=list(estimation="estTSF.ML", diff.=diff., rotation=rotation,
-	               uniquenesses = uniquenesses, 
-	               BpermuteTarget=BpermuteTarget)), "TSFestModel")
+      model <- TSFmodel(z,
+                        f=tframed((y %*% diag(1/sqrt(diag(Sigma)))) %*% t(z$LB.std), tframe(y), names=factorNames), #hatf
+			positive.data=all(0<y)
+		       )
+			 
+       model$data <- y
+       classed(model, c("TSFmodel", "fFAmodel", "FAmodel"))
       }
 
 #######################################

@@ -1,19 +1,17 @@
 \name{factorNames}
 \alias{factorNames}
-\alias{factorNames.TSFmodel}
-\alias{factorNames.TSFestModel}
+\alias{factorNames.FAmodel}
 \alias{factorNames.TSFfactors}
 \alias{factorNames.EstEval}
-\alias{seriesNames.TSFestModel}
+\alias{seriesNames.TSFmodel}
 
 \title{Extract the Factors Names from an Object}
 \usage{
     factorNames(x)
-    \method{factorNames}{TSFmodel}(x)
-    \method{factorNames}{TSFestModel}(x)
+    \method{factorNames}{FAmodel}(x)
     \method{factorNames}{TSFfactors}(x)
     \method{factorNames}{EstEval}(x)
-    \method{seriesNames}{TSFestModel}(x)
+    \method{seriesNames}{TSFmodel}(x)
 }
 \arguments{
     \item{x}{an object.}

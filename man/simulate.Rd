@@ -1,16 +1,14 @@
 \name{simulate.TSFmodel}
 \alias{simulate.TSFmodel}
-\alias{simulate.TSFestModel}
 
 \title{Simulate a Time Series Factor Model}
 \usage{
-    \method{simulate}{TSFmodel}(model,    Cov=model$Omega,   sd=NULL, 
-       noise=NULL, rng=NULL, noise.model=NULL, ...)
-    \method{simulate}{TSFestModel}(model, Cov=TSFmodel(model)$Omega, sd=NULL, 
-       noise=NULL, rng=NULL, noise.model=NULL, ...)
+    \method{simulate}{TSFmodel}(model, f=factors(model), Cov=model$Omega,
+       sd=NULL, noise=NULL, rng=NULL, noise.model=NULL, ...)
 }
 \arguments{
-    \item{model}{A TSFmodel or TSFestModel.}
+    \item{model}{A TSFmodel.}
+    \item{f}{Factors to use with the model.}
     \item{Cov}{covariance of the idiosyncratic term.}
     \item{sd}{see \code{\link[dse1]{makeTSnoise}}.}
     \item{noise}{see \code{\link[dse1]{makeTSnoise}}.}
@@ -58,12 +56,6 @@
   \code{B}  and \code{f} specified, but in this case one of \code{Cov}, 
   \code{sd}, \code{noise}, or \code{noise.model} must be specified as the
   default \code{Omega} from the model is not available.
-  
-%%  WARNING: THIS PART OF THE CODE IS UNTESTED.
-%%  In the more complicated case, where breakpoints are added,  a list of loadings are
-%%  used with the change starting at each date in the list \code{break.points}. The
-%%  first loadings matrix is used beginning at start(factors) and ending one period before
-%%  \code{break.points[[1]]}. 
 }
 \value{A time series matrix.}
 \examples{

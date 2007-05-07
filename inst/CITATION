@@ -3,11 +3,9 @@ citHeader("To cite package 'tsfa' in publications use:")
 citEntry(entry="techreport",
   author = personList(as.person("Paul D. Gilbert"), as.person("Erik Meijer")),
   year =      2005,
-  title =     "Time Series Factor Analaysis with an Application to Measuring
-               Money",
-  type        = {Research Report},
-  number      = {05F10},
-  institution = {University of Groningen, SOM Research School},
+  title =     "Time Series Factor Analaysis with an Application to Measuring Money",
+  number      = "05F10",
+  institution = "University of Groningen, SOM Research School",
   url  = "http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/",
   
   textVersion = 

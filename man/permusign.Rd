@@ -4,7 +4,7 @@
 
 \title{Internal Utility to Permute the Loadings Matrix.}
 \usage{
-    permusign(B, Btarget, Phi=diag(1,ncol(B)))
+    permusign(B, Btarget, Phi=NULL)
 }
 \arguments{
     \item{B}{proposed loadings matrix.}

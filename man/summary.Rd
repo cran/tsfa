@@ -1,19 +1,19 @@
 
-\name{summary.TSFestModel}
+\name{summary.TSFmodel}
 \alias{summary.TSFmodel}
 \alias{print.summary.TSFmodel}
-\alias{summary.TSFestModel}
-\alias{print.summary.TSFestModel}
+\alias{summary.FAmodel}
+\alias{print.summary.FAmodel}
 \alias{summary.TSFmodelEstEval}
 \alias{print.summary.TSFmodelEstEval}
 
-\title{summary.TSFestModel Method for Base Generic}
+\title{summary.TSFmodel Method for Base Generic}
 \usage{
     \method{summary}{TSFmodel}(object, ...)
-    \method{summary}{TSFestModel}(object, ...)
+    \method{summary}{FAmodel}(object, ...)
     \method{summary}{TSFmodelEstEval}(object, ...)
     \method{print}{summary.TSFmodel}(x, ...)
-    \method{print}{summary.TSFestModel}(x, ...)
+    \method{print}{summary.FAmodel}(x, ...)
     \method{print}{summary.TSFmodelEstEval}(x, digits = options()$digits, ...)
 }
 \arguments{
@@ -28,7 +28,7 @@
    Summary method for object in \pkg{tsfa}, such as the object 
    returned by the estimation method \code{estTSF.ML}.
    See \code{\link{FAfitStats}} for details on the results from
-   \code{summary.TSFestModel}.
+   \code{summary.TSFmodel}.
 }
 \seealso{
    \code{\link{estTSF.ML}},

@@ -1,0 +1,24 @@
+ >>> Building/Updating help pages for package 'tsfa'
+     Formats: text html latex example 
+  00.tsfa.Intro                     text    html    latex
+  FAfitStats                        text    html    latex   example
+  FAmodel                           text    html    latex   example
+  FAmodelFitStats                   text    html    latex
+  LedermannBound                    text    html    latex
+  TSFmodel                          text    html    latex   example
+  checkResiduals                    text    html    latex   example
+  distribution                      text    html    latex   example
+  estFAmodel                        text    html    latex   example
+  estTSFmodel                       text    html    latex   example
+  explained                         text    html    latex
+  factorNames                       text    html    latex
+  factors                           text    html    latex
+  loadings                          text    html    latex
+  nfactors                          text    html    latex
+  permusign                         text    html    latex
+  predict                           text    html    latex
+  simulate                          text    html    latex   example
+  summary                           text    html    latex
+  summaryStats                      text    html    latex
+  tframeMethods                     text    html    latex
+  tsfa-package                      text    html    latex

@@ -1,23 +1,23 @@
 \name{loadings}
 \alias{loadings}
 \alias{loadings.default}
-\alias{loadings.TSFmodel}
-\alias{loadings.TSFestModel}
+\alias{loadings.FAmodel}
+%%\alias{loadings.TSFestModel}
 %%\alias{standardizedLoadings}
 %%\alias{standardizedLoadings.TSFestModel}
 \alias{DstandardizedLoadings}
-\alias{DstandardizedLoadings.TSFestModel}
+\alias{DstandardizedLoadings.TSFmodel}
 
 \title{Extract the Loadings Matrix from an Object}
 \usage{
     loadings(x)
     \method{loadings}{default}(x)
-    \method{loadings}{TSFmodel}(x)
-    \method{loadings}{TSFestModel}(x)
+    \method{loadings}{FAmodel}(x)
+%%    \method{loadings}{TSFestModel}(x)
 %%    standardizedLoadings(x)
 %%    \method{standardizedLoadings}{TSFestModel}(x)
     DstandardizedLoadings(x)
-    \method{DstandardizedLoadings}{TSFestModel}(x)
+    \method{DstandardizedLoadings}{TSFmodel}(x)
 }
 \arguments{
     \item{x}{an object.}

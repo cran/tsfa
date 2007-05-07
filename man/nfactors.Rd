@@ -1,15 +1,17 @@
 \name{nfactors}
 \alias{nfactors}
-\alias{nfactors.TSFmodel}
-\alias{nfactors.TSFestModel}
+\alias{nfactors.FAmodel}
+%%\alias{nfactors.TSFmodel}
+%%\alias{nfactors.TSFestModel}
 \alias{nfactors.TSFfactors}
 \alias{nfactors.EstEval}
 
-\title{Extract the Number of Time Series Factors from an Object}
+\title{Extract the Number of Factors from an Object}
 \usage{
     nfactors(x)
-    \method{nfactors}{TSFmodel}(x)
-    \method{nfactors}{TSFestModel}(x)
+    \method{nfactors}{FAmodel}(x)
+%%    \method{nfactors}{TSFmodel}(x)
+%%    \method{nfactors}{TSFestModel}(x)
     \method{nfactors}{TSFfactors}(x)
     \method{nfactors}{EstEval}(x)
 }
@@ -17,7 +19,7 @@
     \item{x}{an object.}
 }
 \description{
-   Extract the number of time series factors from an object.
+   Extract the number of factors from an object.
 }
 
 \value{an integer.}

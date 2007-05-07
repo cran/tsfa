@@ -69,6 +69,9 @@ simBoblq  <- simulate(TSFmodel(Boblq, f=etaTrue,
 
 ML  <- estTSF.ML (simBoblq, 2, BpermuteTarget=Boblq)
 
+if( ! ML$stats$estConverged)       stop("ML estimation did not converge.")
+if( ! ML$stats$rotationConverged)  stop("ML rotation did not converge.")
+
 z <- summary(ML)
 print(z)
 
@@ -124,11 +127,11 @@ tst <- c(2.58390678496512294, 4,  0.629676597497500157, 0, 0, 1, 1,
       1.02360574296459972 , 28.2016066839309296 , 
       -8.01975878958417709 , 54.2866349204937038),  2,6))
 
- if( fuzz < max(abs(ML$model$B - tst ))) {
+ if( fuzz < max(abs(loadings(ML) - tst ))) {
     cat("Calculated value is not the same as test value. Value:\n")
-    printTestValue(ML$model$B, digits=18)
+    printTestValue(loadings(ML), digits=18)
     cat("difference:\n")
-    print(ML$model$B - tst, digits=18)
+    print(loadings(ML) - tst, digits=18)
     all.ok <- FALSE  
     } 
 
@@ -159,11 +162,11 @@ tst <- c(2.58390678496512294, 4,  0.629676597497500157, 0, 0, 1, 1,
       0.0147795889144129913 , -0.00569038907180073866 , -0.0634655440408990468,
        0.0137221905746111837 , 0.00654363825436348953 , 0.00328631180520061548), 6, 2))
 
- if( fuzz < max(abs(ML$model$LB - tst ))) {
+ if( fuzz < max(abs(ML$LB - tst ))) {
     cat("Calculated value is not the same as test value. Value:\n")
-    printTestValue(ML$model$LB, digits=18)
+    printTestValue(ML$LB, digits=18)
     cat("difference:\n")
-    print(ML$model$LB - tst, digits=18)
+    print(ML$LB - tst, digits=18)
     all.ok <- FALSE  
     } 
 

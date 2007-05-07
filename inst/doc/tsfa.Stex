@@ -330,7 +330,7 @@ rotation. The oblimin rotation with $\gamma = 0.5$ is given by
 
 \begin{Scode}
 c4withMLg0.5 <- estTSF.ML(MBandCredit, 4, BpermuteTarget=loadings(c4withML),
-     rotation="oblimin", methodArgs=list(gam=0.5))
+     rotation="oblimin", rotationArgs=list(gam=0.5))
 loadings(c4withMLg0.5)
 DstandardizedLoadings(c4withMLg0.5)
 DstandardizedLoadings(c4withMLg0.5) - DstandardizedLoadings(c4withML)
@@ -340,24 +340,24 @@ Summary information is produced with (output omitted)
 summary(c4withMLg0.5)
 \end{Scode}
 
-Other rotation results are produced by the following, but outputs are ommited.
+Other rotation results are produced by the following, but outputs are omitted.
 
 \begin{Scode}{results=hide}
 c4withMLgneg0.5 <- estTSF.ML(MBandCredit, 4, BpermuteTarget=loadings(c4withML),
-     rotation="oblimin", methodArgs=list(gam=-0.5))
+     rotation="oblimin", rotationArgs=list(gam=-0.5))
 loadings(c4withMLgneg0.5)
 DstandardizedLoadings(c4withMLgneg0.5)
 DstandardizedLoadings(c4withMLgneg0.5) - DstandardizedLoadings(c4withML)
 summary(c4withMLgneg0.5)
 
 c4withMLgneg1.0 <- estTSF.ML(MBandCredit, 4, BpermuteTarget=loadings(c4withML),
-     rotation="oblimin", methodArgs=list(gam=-1.0))
+     rotation="oblimin", rotationArgs=list(gam=-1.0))
 loadings(c4withMLgneg1.0)
 DstandardizedLoadings(c4withMLgneg1.0)
 DstandardizedLoadings(c4withMLgneg1.0) - DstandardizedLoadings(c4withML)
 summary(c4withMLgneg1.0)
 
-c4withMLbQ <- estTSF.ML(MBandCredit, 4, rotation="bentler",
+c4withMLbQ <- estTSF.ML(MBandCredit, 4, rotation="bentlerQ",
      BpermuteTarget=loadings(c4withML))
 loadings(c4withMLbQ)
 DstandardizedLoadings(c4withMLbQ)
@@ -387,7 +387,7 @@ Factor 3 explains on currency, personal chequing, and investment,
 so the separation is not so interesting. Output is omitted from these.
 
 \begin{Scode}{results=hide}
-c4withMLgm <- estTSF.ML(MBandCredit, 4, rotation="geomin",
+c4withMLgm <- estTSF.ML(MBandCredit, 4, rotation="geominQ",
      BpermuteTarget=loadings(c4withML))
 loadings(c4withMLgm)
 DstandardizedLoadings(c4withMLgm)
@@ -561,7 +561,7 @@ tfplot(ytoypc(f), ytoypc(cbind(M1, M2pp)), graphs.per.page=2,
 
 \section{References}
   Paul D. Gilbert and Erik Meijer, (2006) "Money and Credit Factors",
-  Bank of Canada  Working Paper 2006-xx, Available at
+  Bank of Canada  Working Paper 2006-3, Available at
   \verb <http://www.bank-banque-canada.ca/en/res/wp/wp(y)_2006.html> .
 
   

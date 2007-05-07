@@ -2,14 +2,14 @@
 \alias{TSFmodel}
 \alias{TSFmodel.default}
 \alias{TSFmodel.TSFmodel}
-\alias{TSFmodel.TSFestModel}
+\alias{TSFmodel.FAmodel}
 \title{Construct a Time Series Factor Model}
 \usage{
     TSFmodel(obj, ...)
     \method{TSFmodel}{default}(obj, f=NULL, Omega = NULL, Phi=NULL, LB = NULL, 
 	 positive.data=FALSE, names=NULL, ...)
     \method{TSFmodel}{TSFmodel}(obj, ...)
-    \method{TSFmodel}{TSFestModel}(obj, ...)
+    \method{TSFmodel}{FAmodel}(obj, f=NULL, positive.data=FALSE, names=NULL, ...)
 }
 \arguments{
     \item{obj}{The loadings matrix (\eqn{B}{B}) in the default (constructor) method.
