@@ -3,6 +3,8 @@
 
 require("tsfa")
 
+if (require("CDNmoney")) {
+
 data("CanadianMoneyData.asof.6Feb2004", package="CDNmoney")
 
 # for monte carlo
@@ -349,3 +351,4 @@ fuzz <- 1e-5
 cat("tests completed.\n")
 
 if (! all.ok) stop("some tests FAILED")
+} else cat("CDNmoney data not available. Tests skipped.\n")

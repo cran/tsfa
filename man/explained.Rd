@@ -9,7 +9,7 @@
     \method{explained}{TSFmodel}(object, f=factors(object),
                   names=seriesNames(object), ...)
     \method{explained}{FAmodel}(object, f=factors(object),
-                  names=indicatorNames(object), ...)
+                  names=dimnames(loadings(object))[[1]], ...)
 }
 \arguments{
     \item{object}{A TSFmodel or TSFestModel.}

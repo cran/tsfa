@@ -41,7 +41,7 @@ An overview of how to use the package is available in the vignette
 
 \author{
 Paul Gilbert <pgilbert@bank-banque-canada.ca> and
-Erik Meijer  <e.meijer@eco.rug.nl>
+Erik Meijer  <meijer@rand.org>
 
 Maintainer: Paul Gilbert <pgilbert@bank-banque-canada.ca>  
 }

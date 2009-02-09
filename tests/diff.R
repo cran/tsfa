@@ -3,6 +3,8 @@
 
 require("tsfa")
 
+if (require("CDNmoney")) {
+
 data("CanadianMoneyData.asof.6Feb2004", package="CDNmoney")
 
 fuzz <- 1e-6 
@@ -93,3 +95,4 @@ cat("tests completed.\n")
 
 
 if (! all.ok) stop("some tests FAILED")
+} else cat("CDNmoney data not available. Tests skipped.\n")

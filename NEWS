@@ -1,4 +1,22 @@
-                 CHANGES IN TSFA VERSION 2006.x-x
+                 CHANGES IN TSFA VERSION 2009.2-1
+
+Changes (Possibly) Affecting Users
+
+    o added check that CDNmoney is available in tests and examples.
+
+    o minor changes corresponding to small changes in tframe.
+
+    o update Erik Meijer's email address.
+
+    o small fixed in vignettes to properly produce graphs, and missed changes
+      related rationalization of object structures.
+
+    o replaced reference to non-existent indicatorNames() in explained.FAmodel 
+        and summary.FAmodel.
+
+    o NEWS file 2006.x-x was corrected to indicate 2007.5-1.
+
+                 CHANGES IN TSFA VERSION 2007.5-1
 
 Changes (Possibly) Affecting Users
 

@@ -49,7 +49,7 @@ coef.FAmodel <- function(object, ...) {c(loadings(object), diag(object$Omega))}
 
 explained <- function(object, ...)UseMethod("explained")
 explained.FAmodel <- function (object, f=factors(object),
-                  names=indicatorNames(object), ...) {
+                  names=dimnames(loadings(object))[[1]], ...) {
   # portion of data explained by factors
   r <- t(loadings(object) %*% t(f))
   dimnames(r) <- list(NULL, names)
@@ -81,7 +81,7 @@ LedermannBound  <- function(M) {
 
 summary.FAmodel <- function(object, ...)
  {classed(list(k=nfactors(object), M=nrow(loadings(object)),
-      Snames=indicatorNames(object), Fnames=factorNames(object),
+      Snames=dimnames(loadings(object))[[1]], Fnames=factorNames(object),
       Omega=!is.null(object$Omega), 
       Phi=!is.null(object$Phi), 
       LB=!is.null(object$LB), 
@@ -316,7 +316,7 @@ simulate.TSFmodel <- function(model, f=factors(model), Cov=model$Omega, sd=NULL,
         }
     attr(x, "noise") <- noise
     attr(x, "TSFmodel") <- model
-    tframed(x, tf=f, names=seriesNames(model))
+    tframed(x, tf=tframe(f), names=seriesNames(model))
 }
 
 

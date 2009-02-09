@@ -3,6 +3,8 @@
 
 require("tsfa")
 
+if (require("CDNmoney")) {
+
 data("CanadianMoneyData.asof.6Feb2004", package="CDNmoney")
 
 # for monte carlo
@@ -222,3 +224,4 @@ tst <- diag(c(72.633490218431234, 1233.026245431895177, 87.337721037020572,
 cat("tests completed.\n")
 
 if (! all.ok) stop("some tests FAILED")
+} else cat("CDNmoney data not available. Tests skipped.\n")

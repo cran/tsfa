@@ -139,6 +139,7 @@
   }
 
 \examples{
+  if (require("CDNmoney")){
     data("CanadianMoneyData.asof.28Jan2005", package="CDNmoney")
     data("CanadianCreditData.asof.28Jan2005", package="CDNmoney")
 
@@ -168,6 +169,7 @@
 
     c4withML  <- estTSF.ML(MBandCredit, 4)
     FAfitStats(c4withML)
+  }
 }
 \author{Paul Gilbert and Erik Meijer}
 \concept{TSFA}

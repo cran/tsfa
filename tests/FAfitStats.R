@@ -4,6 +4,8 @@ require("tsfa")
 fuzz <- 1e-4 
 all.ok <- TRUE  
 
+if (require("CDNmoney")) {
+
 data("CanadianMoneyData.asof.28Jan2005", package="CDNmoney")
 data("CanadianCreditData.asof.28Jan2005", package="CDNmoney")
 
@@ -116,3 +118,4 @@ tst <- t(matrix(c(
 
 cat("tests completed.\n")
 if (! all.ok) stop("some tests FAILED")
+} else cat("CDNmoney data not available. Tests skipped.\n")
