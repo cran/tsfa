@@ -21,7 +21,7 @@
    be called by a user.
 }
 \seealso{
-   \code{\link[dse2]{EstEval}},
+   \code{\link[EvalEst]{EstEval}},
    \code{\link{summary.TSFmodelEstEval}},
    \code{\link{tfplot.TSFmodelEstEval}}
 }

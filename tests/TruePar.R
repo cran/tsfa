@@ -9,8 +9,8 @@ data("CanadianMoneyData.asof.6Feb2004", package="CDNmoney")
 
 # for monte carlo
 require("setRNG")
-require("dse1")
-require("dse2")  # for EstEval
+require("dse")
+require("EvalEst")  # for EstEval
 
 all.ok <- TRUE  
 

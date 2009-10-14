@@ -75,7 +75,7 @@
 }
 \seealso{
    \code{\link{simulate.TSFmodel}},
-   \code{\link[dse1]{simulate}},
+   \code{\link[dse]{simulate}},
    \code{\link{estTSF.ML}}
 }
 \author{Paul Gilbert}

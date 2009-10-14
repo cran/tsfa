@@ -27,7 +27,7 @@
    \code{\link{TSFmodel}},
    \code{\link{predict}},
    \code{\link{estTSF.ML}},
-   \code{\link[dse1]{simulate}},
+   \code{\link[dse]{simulate}},
    \code{\link{tfplot.TSFmodel}}, 
 }
 \author{Paul Gilbert}

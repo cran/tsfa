@@ -4,8 +4,8 @@ if (require("CDNmoney")) {
 
 data("CanadianMoneyData.asof.6Feb2004", package="CDNmoney")
 
-#require("dse1")
-#require("dse2")  # for EstEval
+#require("dse")
+#require("EvalEst")  # for EstEval
 
 fuzz <- 1e-6 
 all.ok <- TRUE  

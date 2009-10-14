@@ -16,7 +16,7 @@ estimated separately using the extracted factors.
 Package: \tab tsfa\cr
 Depends: \tab R (>= 2.0.0), GPArotation, setRNG (>= 2004.4-1), tframe (>=
 2006.1-1),\cr
-         \tab dse1 (>= 2006.1-1), dse2 (>= 2006.1-1)\cr
+         \tab dse (>= 2006.1-1), EvalEst (>= 2006.1-1)\cr
 Suggests: \tab CDNmoney\cr
 License: \tab GPL Version 2.\cr
 URL: \tab http://www.bank-banque-canada.ca/pgilbert\cr
@@ -63,6 +63,5 @@ Maintainer: Paul Gilbert <pgilbert@bank-banque-canada.ca>
    \code{\link{estTSF.ML}}, 
    \code{\link[GPArotation:GPArotation-package]{GPArotation}}, 
    \code{\link[tframe:tframe-package]{tframe}}, 
-   \code{\link[dse1:dse1-package]{dse1}}, 
-   \code{\link[dse2:dse1-package]{dse2}} 
+   \code{\link[dse:dse-package]{dse}} 
 }

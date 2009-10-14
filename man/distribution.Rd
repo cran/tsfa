@@ -79,7 +79,7 @@
 
     ### run Monte Carlo  N.B. replications would typically be much larger
 
-    require("dse2")
+    require("EvalEst")
  
     EE.ML5 <- EstEval(TSFmodel(Boblq, f=etaTrue, positive.measures=FALSE),
       replications=5, quiet=FALSE,
@@ -95,8 +95,8 @@
 }
 
 \seealso{
-   \code{\link[dse2]{distribution}},
-   \code{\link[dse2]{EstEval}},
+   \code{\link[EvalEst]{distribution}},
+   \code{\link[EvalEst]{EstEval}},
    \code{\link{estTSF.ML}}
 }
 \author{Paul Gilbert}

@@ -8,8 +8,8 @@ if (require("CDNmoney")) {
 data("CanadianMoneyData.asof.6Feb2004", package="CDNmoney")
 
 # for monte carlo
-require("dse1")
-require("dse2")  # for EstEval
+require("dse")
+require("EvalEst")  # for EstEval
 
 fuzz <- 1e-8
 all.ok <- TRUE  

@@ -19,7 +19,7 @@
    and the sum of the off-diagonal elements of the covariance are printed.
    The residual is then passed to the default method for \code{checkResiduals}
    which produces several diagonistic plots and (invisibly) returns statistics.
-   See \code{\link[dse1]{checkResiduals}} for more details. 
+   See \code{\link[dse]{checkResiduals}} for more details. 
    Calculation of partial autocorrelations can be problematic.
    
    Some care should be taken interpreting the results. Factor estimation does
@@ -60,7 +60,7 @@
 }
 
 \seealso{
-   \code{\link[dse1]{checkResiduals}},
+   \code{\link[dse]{checkResiduals}},
    \code{\link{TSFmodel}},
    \code{\link{estTSF.ML}}
 }

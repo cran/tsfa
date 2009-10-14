@@ -10,10 +10,10 @@
     \item{model}{A TSFmodel.}
     \item{f}{Factors to use with the model.}
     \item{Cov}{covariance of the idiosyncratic term.}
-    \item{sd}{see \code{\link[dse1]{makeTSnoise}}.}
-    \item{noise}{see \code{\link[dse1]{makeTSnoise}}.}
-    \item{rng}{see \code{\link[dse1]{makeTSnoise}}.}
-    \item{noise.model}{see \code{\link[dse1]{makeTSnoise}}.}
+    \item{sd}{see \code{\link[dse]{makeTSnoise}}.}
+    \item{noise}{see \code{\link[dse]{makeTSnoise}}.}
+    \item{rng}{see \code{\link[dse]{makeTSnoise}}.}
+    \item{noise.model}{see \code{\link[dse]{makeTSnoise}}.}
     \item{...}{arguments passed to other methods.}
 }
 \description{
@@ -37,12 +37,12 @@
   matrix result).
   
   \code{simulate} passes \code{Cov}, \code{sd}, \code{noise}, \code{rng}, 
-  and \code{noise.model} to \code{\link[dse1]{makeTSnoise}} to generate 
+  and \code{noise.model} to \code{\link[dse]{makeTSnoise}} to generate 
   the random idiosyncratic term \eqn{\varepsilon_t}{eps(t)}, 
   which will have the same dimension as the generated indicator series that
   are returned. 
   \eqn{\varepsilon_t}{eps(t)} will have random distribution determined by other
-  arguments passed to \code{\link[dse1]{makeTSnoise}}. 
+  arguments passed to \code{\link[dse]{makeTSnoise}}. 
   Note that the covariance of the generated indicator series \eqn{y_t}{y(t)}
   is also influenced by the covariance of the factors \eqn{f}{f}.
   
@@ -74,7 +74,7 @@
 \seealso{
    \code{\link{TSFmodel}},
    \code{\link{estTSF.ML}},
-   \code{\link[dse1]{simulate}},
+   \code{\link[dse]{simulate}},
    \code{\link{tfplot.TSFmodel}}, 
    \code{\link{explained.TSFmodel}}
 }

@@ -1,10 +1,10 @@
 importFrom("stats","loadings")
 
 import("tframe")
-importFrom("dse1","simulate")
-importFrom("dse1","checkResiduals")
-importFrom("dse2","EstEval")
-importFrom("dse2","distribution")
+importFrom("dse","simulate")
+importFrom("dse","checkResiduals")
+importFrom("EvalEst","EstEval")
+importFrom("EvalEst","distribution")
 
 #########  FA  #########
 

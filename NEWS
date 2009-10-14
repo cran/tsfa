@@ -1,71 +1,74 @@
-                 CHANGES IN TSFA VERSION 2009.2-1
+Changes in tsfa version 2009.10-1
 
-Changes (Possibly) Affecting Users
+   o	Standardized NEWS format for new function news().
 
-    o added check that CDNmoney is available in tests and examples.
+   o	Fixed a few documentation problems found by R-2.10.0 (beta) quality checks.
 
-    o minor changes corresponding to small changes in tframe.
 
-    o update Erik Meijer's email address.
+Changes in tsfa version 2009.2-1
 
-    o small fixed in vignettes to properly produce graphs, and missed changes
-      related rationalization of object structures.
+   o	added check that CDNmoney is available in tests and examples.
 
-    o replaced reference to non-existent indicatorNames() in explained.FAmodel 
-        and summary.FAmodel.
+   o	minor changes corresponding to small changes in tframe.
 
-    o NEWS file 2006.x-x was corrected to indicate 2007.5-1.
+   o	update Erik Meijer's email address.
 
-                 CHANGES IN TSFA VERSION 2007.5-1
+   o	small fixed in vignettes to properly produce graphs, and missed changes
+	related rationalization of object structures.
 
-Changes (Possibly) Affecting Users
+   o	replaced reference to non-existent indicatorNames() in explained.FAmodel 
+	and summary.FAmodel.
 
-    o  small changes related to changes in tframe were necessary.
+   o	NEWS file 2006.x-x was corrected to indicate 2007.5-1.
+
+Changes in tsfa version 2007.5-1
+
+   o	small changes related to changes in tframe were necessary.
     
-    o  demos  SOM-2005.R  and WP-2006-3.R were added.
+   o	demos  SOM-2005.R  and WP-2006-3.R were added.
 
-    o  the number of parameters in the calculation of fit statistics for the
-       saturated model was fix for the possibility that the Lederman bound may
-       not be an integer.
+   o	the number of parameters in the calculation of fit statistics for the
+	saturated model was fix for the possibility that the Lederman bound may
+	not be an integer.
  
-    o  object structure was rationalized. TSFestModel is now gone, and the
-       estimation sub-object is an optional $stats element in the FAmodel 
-       object. One important aspect of this is that $model$estConverged and
-       $model$rotationtConverged are now $stats$estConverged and 
-       $stats$rotationtConverged. FAmodel does not have factors, but fFAmodel 
-       extends it by including factors, and TSFmodel extends fFAmodel by 
-       including time associated pieces (tframe and diff). The fFAmodel is 
-       experimental and not extensively used yet, but there is a fair amount
-       code already committed to having factors in the TSFmodel as an
-       extension of an FAmodel.
+   o	object structure was rationalized. TSFestModel is now gone, and the
+	estimation sub-object is an optional $stats element in the FAmodel 
+	object. One important aspect of this is that $model$estConverged and
+	$model$rotationtConverged are now $stats$estConverged and 
+	$stats$rotationtConverged. FAmodel does not have factors, but fFAmodel 
+	extends it by including factors, and TSFmodel extends fFAmodel by 
+	including time associated pieces (tframe and diff). The fFAmodel is 
+	experimental and not extensively used yet, but there is a fair amount
+	code already committed to having factors in the TSFmodel as an
+	extension of an FAmodel.
 
-    o  argument methodArgs changed to rotationArgs in several functions, for
-       improved clarity.
+   o	argument methodArgs changed to rotationArgs in several functions, for
+	improved clarity.
 
-    o  added estimation function estFAmodel using Sigma rather than data (and
-       so does not return factor predictions). This also provides estimation 
-       for non-time-series factor models (FAmodel objects).
+   o	added estimation function estFAmodel using Sigma rather than data (and
+	so does not return factor predictions). This also provides estimation 
+	for non-time-series factor models (FAmodel objects).
 
-    o  estTSF.ML  re-organized to call estFAmodel using Sigma then add 
-       factor predictions.
+   o	estTSF.ML  re-organized to call estFAmodel using Sigma then add 
+	factor predictions.
      
-    o  changed estTSF.ML to call rotation by name rather than GPFoblq, so
-       othogonal rotations are now possible. (See rotation 
-       names in GPArotations.)
+   o	changed estTSF.ML to call rotation by name rather than GPFoblq, so
+	othogonal rotations are now possible. (See rotation 
+	names in GPArotations.)
 
-    o  changed permusign to have default Phi of NULL, rather than I, which is 
-       more consistent with GPForth for orthogonal rotations.
+   o	changed permusign to have default Phi of NULL, rather than I, which is 
+	more consistent with GPForth for orthogonal rotations.
 
-    o eps and maxit were not being passed from estTSF.ML to GPFoblq.
+   o	eps and maxit were not being passed from estTSF.ML to GPFoblq.
  
-    o The Bartlett prediction calculation in estTSF.ML was converted to use a 
-      more robust computation, which works better when there are more indicators
-      and possible problems of near singular computations.
+   o	The Bartlett prediction calculation in estTSF.ML was converted to use a 
+	more robust computation, which works better when there are more indicators
+	and possible problems of near singular computations.
 
-    o Methods for tfplot were changed so that adding the Title 
-      can be turned off using a global option setting PlotTitles=FALSE.
+   o	Methods for tfplot were changed so that adding the Title 
+	can be turned off using a global option setting PlotTitles=FALSE.
  
-    o is.R() and some code related to possibly running in Splus was
-      removed. (The package has never been tested in Splus.)
+   o	is.R() and some code related to possibly running in Splus was
+	removed. (The package has never been tested in Splus.)
 
-    o fixed a problem with tsfa tfplot method for monte carlo class.
+   o	fixed a problem with tsfa tfplot method for monte carlo class.
