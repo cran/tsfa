@@ -35,7 +35,7 @@ z <- tframed(tbind(
 
 z <- tfwindow(z, start=c(1986,1))
 if( all(c(2003,12) ==end(z))) z <-tfwindow(z, end=c(2003,11))
-MBcomponents <- 1e8 * z/matrix(tfwindow(popm * cpi,tf=tframe(z)),periods(z),6)
+MBcomponents <- 1e8 * z/matrix(tfwindow(popm * cpi,tf=tframe(z)),Tobs(z),6)
 
 ### Specify "true" parameters and factors
 

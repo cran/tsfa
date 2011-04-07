@@ -88,12 +88,12 @@ Various sample statistics are checked with
 \begin{Scode}
 start(MBandCredit)
 end(MBandCredit)
-periods(MBandCredit)
+Tobs(MBandCredit)
 DX <- diff(MBandCredit, lag=1)
 \end{Scode}
 The number of observations is
 \begin{Scode}
-periods(MBandCredit)
+Tobs(MBandCredit)
 \end{Scode}
 The number of series is
 \begin{Scode}

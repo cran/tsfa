@@ -33,8 +33,8 @@
   The number of rows in the loadings matrix determines the number of 
   indicator series generated (the number of columns in the matrix result). 
   The number of rows in the time series factor matrix determines the number of
-  periods in the indicator series generated (the number of rows in the 
-  matrix result).
+  time observations (periods) in the indicator series generated, that is, the
+  number of rows in the matrix result.
   
   \code{simulate} passes \code{Cov}, \code{sd}, \code{noise}, \code{rng}, 
   and \code{noise.model} to \code{\link[dse]{makeTSnoise}} to generate 

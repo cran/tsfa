@@ -299,13 +299,13 @@ TSFmodel.FAmodel <- function(obj, f=NULL, positive.data=FALSE, names=NULL, ...)
 simulate.TSFmodel <- function(model, f=factors(model), Cov=model$Omega, sd=NULL, noise=NULL,  
 	rng=NULL, noise.model=NULL, ...)
    {#  (... further arguments, currently disregarded)
-    # tframe and periods are taken from factors (f) 
+    # tframe and Tobs are taken from factors (f) 
     
     if ( is.null(Cov) & is.null(sd) & is.null(noise) & is.null(noise.model))
       stop("One of Cov, sd, noise, or noise.model, must be specified.")
 
     p <- nrow(loadings(model))
-    noise <- makeTSnoise(periods(f), p, 1, noise=noise, rng=rng,
+    noise <- makeTSnoise(Tobs(f), p, 1, noise=noise, rng=rng,
                         Cov=Cov, sd=sd, noise.model=noise.model)
 
     #use the calculation in explained but discard the class setting
@@ -669,7 +669,7 @@ summary.TSFmodel <- function(object, ...)
       }
   
   classed(list(
-      N=periods(factors(object)), S=start(factors(object)), E=end(factors(object)),
+      N=Tobs(factors(object)), S=start(factors(object)), E=end(factors(object)),
       Snames=seriesNames(object),Fnames=factorNames(est),
       fitStats=fitStats, B.estimate=est$loadings,   B.true=B.true,
       #stdB.estimate=standardizedLoadings(object), 
@@ -684,7 +684,7 @@ summary.TSFmodel <- function(object, ...)
    #cat("positive.data ", (if(x$positive.data) "is" else "is not"), " specified.\n")
 
 print.summary.TSFmodel <- function (x, ...)
-  {cat("factors have ", x$N, " periods from:", x$S, " to ", x$E, "\n")
+  {cat("factors have ", x$N, " observations from:", x$S, " to ", x$E, "\n")
    cat("     Estimated loadings:\n"); print(x$loadings.estimate)
    cat("\n     Standardized (using differenced data covariance):\n")
    print(x$DstdB.estimate)
@@ -1024,9 +1024,9 @@ estTSFmodel <- function(y, p, diff.=TRUE,
       indicatorNames <- seriesNames(y)
       zz <- if (diff.) diff(y) else y
       zz <- sweep(zz,2,colMeans(zz), "-")
-      Sigma  <- crossprod(zz)/(periods(zz) - 1)
+      Sigma  <- crossprod(zz)/(Tobs(zz) - 1)
       
-      z <- estFAmodel(Sigma, p, n.obs=(periods(y) - diff.),
+      z <- estFAmodel(Sigma, p, n.obs=(Tobs(y) - diff.),
                 est="factanal", 
 		estArgs=estArgs,
                 rotation=rotation, rotationArgs=rotationArgs, 

@@ -35,7 +35,7 @@ z <- tframed(tbind(
 
 z <- tfwindow(z, start=c(1986,1))
 if( all(c(2003,12) ==end(z))) z <-tfwindow(z, end=c(2003,11))
-MBcomponents <- 1e8 * z/matrix(tfwindow(popm * cpi,tf=tframe(z)),periods(z),6)
+MBcomponents <- 1e8 * z/matrix(tfwindow(popm * cpi,tf=tframe(z)),Tobs(z),6)
 
 
 
@@ -45,7 +45,7 @@ MBcomponents <- 1e8 * z/matrix(tfwindow(popm * cpi,tf=tframe(z)),periods(z),6)
 DX <- diff(MBcomponents)
 stds <- sqrt(diag(cov(DX)))
 
-poppar <- factanal(factors = 2, covmat = cov(DX), n.obs = periods(DX),
+poppar <- factanal(factors = 2, covmat = cov(DX), n.obs = Tobs(DX),
             scores = "none", rotation = "none")
 
 # Quartimin (= oblimin with parameter 0) rotation with Kaiser normalization
