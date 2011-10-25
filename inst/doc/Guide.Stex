@@ -564,14 +564,14 @@ tfplot(ytoypc(f), ytoypc(cbind(M1, M2pp)), graphs.per.page=2,
 
 \section{References}
   Paul D. Gilbert and Erik Meijer, (2006) "Money and Credit Factors",
-  Bank of Canada  Working Paper 2006-3, Available at
-  \verb <http://www.bank-banque-canada.ca/en/res/wp/wp(y)_2006.html> .
+  Bank of Canada  Working Paper 2006-3, available at
+  \verb <http://www.bankofcanada.ca/2006/03/publications/research/working-paper-2006-3/> .
 
   
   Paul D. Gilbert and Erik Meijer, (2005) 
   "Time Series Factor Analysis with an Application to Measuring Money",
-  Research Report 05F10, University of Groningen, SOM Research School.
-  Available at 
+  Research Report 05F10, University of Groningen, SOM Research School,
+  available at 
   
   \verb <http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/> .
 
