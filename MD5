@@ -1,7 +1,6 @@
-6a4c5500ff4b8659a154f0d2c97d55d9 *DESCRIPTION
-57baf7d98787a9088692b1ab1179a684 *LICENSE
-96c3919b72ea092265ef65974adb84ba *NAMESPACE
-0fe22d0df2a45de99407a99028de7477 *NEWS
+69437f97c31b667fdbf5660a9d694ee8 *DESCRIPTION
+1028d79acd616a41cc879eb42621bd85 *NAMESPACE
+d5cea2619af1fe7c3cc2a96696372b28 *NEWS
 fa4eb0983a1ea33df379f52a8345cd50 *R/tsfa.R
 d8057ff9abd85cd2252ae6185e26c97f *demo/00Index
 f9e6a11bce66b42cadcc810ad4b4db82 *demo/SOM-2005.R
@@ -10,7 +9,7 @@ f9e6a11bce66b42cadcc810ad4b4db82 *demo/SOM-2005.R
 642bb18cdeee63c1222ebed0c7c33f2f *extra/info.R
 17339f095b5d9c64360b761c907cb5c3 *inst/CITATION
 634742c64cbc645393c2d59d0419c6a6 *inst/doc/Guide.Stex
-e3b7683f33c9369f05110b03f194d932 *inst/doc/Guide.pdf
+233bb54a0b7004d947c46a9bf15131e0 *inst/doc/Guide.pdf
 d1caec11720c5dd65a50ed631f004681 *man/00.tsfa.Intro.Rd
 34ea12cb51cba6ec32f998b84487402c *man/FAfitStats.Rd
 4c378d3df6fbe47b9301a39050a34436 *man/FAmodel.Rd
@@ -31,7 +30,7 @@ f6f3c84d8bfba45b604ea350ea5c91d7 *man/nfactors.Rd
 f12da25feb17e2510eabb7d7bacfad1c *man/simulate.Rd
 86697783fb38d43964bcc721850e0ee4 *man/summary.Rd
 255ce5afaadd8c1b2967c2d6fa74e69d *man/summaryStats.Rd
-ab6a7d36909933ec203042d7914dce8f *man/tframeMethods.Rd
+4610b90d93cb9a390ab4bddbf9a0a085 *man/tframeMethods.Rd
 eee695d951002a8ad2ee0232b0fd75fc *man/tsfa-package.Rd
 878433a299248f403cc60c7ecf2fb9cf *tests/FAfitStats.R
 2ed8b294affa785d96f544e13154c9e5 *tests/MCestTSF_ML.R
@@ -39,3 +38,4 @@ eee695d951002a8ad2ee0232b0fd75fc *man/tsfa-package.Rd
 8e2f3360e9f3394b132414e82098afca *tests/diff.R
 02ca53c5ce3151f3ac100dce41ece164 *tests/estTSF_ML.R
 1ef8378de8cb5dae96834ba00d54b961 *tests/estTSF_QML.R
+634742c64cbc645393c2d59d0419c6a6 *vignettes/Guide.Stex

@@ -98,7 +98,7 @@
    \code{\link{TSFmodel}},
    \code{\link{estTSF.ML}},
    \code{\link{simulate.TSFmodel}},
-   \code{\link[tframe]{tfplot}},
+   \code{\link[tfplot]{tfplot}},
    \code{\link{diff}},
    \code{\link{factors}},
    \code{\link{explained}},

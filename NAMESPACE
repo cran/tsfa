@@ -1,6 +1,7 @@
 importFrom("stats","loadings")
 
 import("tframe")
+import("tfplot")
 importFrom("dse","simulate")
 importFrom("dse","checkResiduals")
 importFrom("EvalEst","EstEval")

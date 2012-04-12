@@ -1,18 +1,23 @@
-Changes in tsfa version 2009.10-1
+Changes in tsfa version 2012.4-1
 
-   o	Standardized NEWS format for new function news().
-
-   o	Fixed a few documentation problems found by R-2.10.0 (beta) quality checks.
-
+   o	Added tfplot to Depends.
 
 Changes in tsfa version 2011.11-1
 
-   o	updated maintainer email address.
+   o	Updated maintainer email address.
 
 Changes in tsfa version 2011.3-1
 
    o	Changed periods() and tfperiods() to Tobs() to be consistent with
    	changes in tframe.
+
+Changes in tsfa version 2009.10-1
+
+   o	Standardized NEWS format for new function news().
+
+   o	Fixed a few documentation problems found by R-2.10.0 (beta) 
+   	quality checks.
+
 
 Changes in tsfa version 2009.2-1
 
