@@ -1,3 +1,9 @@
+Changes in tsfa version 2014.2-1
+
+   o	Changed tfplot.TSFfactors for changes to tfplot generic and default.
+
+   o	Cleaned up imports and NAMESPACE.
+
 Changes in tsfa version 2012.4-1
 
    o	Added tfplot to Depends.

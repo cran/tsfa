@@ -1,7 +1,9 @@
 importFrom("stats","loadings")
 
-import("tframe")
+import("setRNG")
+import("GPArotation")
 import("tfplot")
+import("tframe")
 importFrom("dse","simulate")
 importFrom("dse","checkResiduals")
 importFrom("EvalEst","EstEval")

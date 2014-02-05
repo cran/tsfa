@@ -395,14 +395,14 @@ tfplot.TSFmodel <- function(x,..., tf=tfspan(x , ...),
       Title="Model factors", 
       lty = 1:5, lwd = 1, pch = NULL, col = 1:6, cex = NULL,
       xlab=NULL, ylab=factorNames(x), xlim = NULL, ylim = NULL, 
-      graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE) {
+      graphs.per.page=5, par=NULL, reset.screen=TRUE) {
 
    tfplot(factors(x),...,  tf=tf, start=start, end=end, 
 	series=series, Title=Title, 
         lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
         xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 	graphs.per.page=graphs.per.page, 
-	par=par, mar=mar, reset.screen=reset.screen)
+	par=par, reset.screen=reset.screen)
    }
 
 #tfplot.TSFestModel <- function(x,...)  tfplot(factors(x), ...)
@@ -413,7 +413,7 @@ tfplot.TSFfactors <- function(x,..., tf=tfspan(x , ...),
       Title="Estimated factors (dashed) and true (solid)", 
       lty = c("dashed", "solid"), lwd = 1, pch = NULL, col = 1:6, cex = NULL,
       xlab=NULL, ylab=factorNames(x), xlim = NULL, ylim = NULL, 
-      graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE) {
+      graphs.per.page=5, par=NULL, reset.screen=TRUE) {
 
    tfplot(unclass(x), attr(x, "true"),  ..., 
         tf=tf, start=start, end=end, 
@@ -421,7 +421,7 @@ tfplot.TSFfactors <- function(x,..., tf=tfspan(x , ...),
         lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
         xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 	graphs.per.page=graphs.per.page, 
-	par=par, mar=mar, reset.screen=reset.screen)
+	par=par, reset.screen=reset.screen)
    }
 
 
@@ -432,14 +432,14 @@ tfplot.TSFexplained <- function(x,..., tf=tfspan(x, ...), start=tfstart(tf), end
       xlab=NULL, 
       ylab=seriesNames(x), 
       xlim = NULL, ylim = NULL,
-      graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE) {
+      graphs.per.page=5, par=NULL, reset.screen=TRUE) {
     tfplot( unclass(x), attr(x, "data"), 
                 Title=Title,
                 tf=tf, start=start, end=end, series=series,  
                 lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
                 xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 		graphs.per.page=graphs.per.page, 
-		par=par, mar=mar, reset.screen=reset.screen)
+		par=par, reset.screen=reset.screen)
   }
 
 
@@ -748,10 +748,10 @@ distribution.factorsEstEval <- function (obj, ..., bandwidth = "nrd0",
       }
     for (i in 1:length(obj$result)) r[i,,] <- obj$result[[i]] - truth
     xlab <- "factor "
-    old.par <- par(mfcol = c(min(graphs.per.page, ncol(truth)), 1),
-        mar = c(5.1, 4.1, 4.1, 2.1), no.readonly = TRUE)
-    on.exit(par(old.par))
-    if (cumulate)
+    old.par <- par(par)
+    on.exit(par(old.par)) 
+    if (cumulate){
+       par(mfcol = c(min(graphs.per.page, ncol(truth)), 1), no.readonly = TRUE)
        for (i in 1:ncol(truth))
          {rd <- density(c(r[,,i]), bw = bandwidth)
           rdy <- rd$y
@@ -762,6 +762,7 @@ distribution.factorsEstEval <- function (obj, ..., bandwidth = "nrd0",
           if(!is.null(Title) && (i==1) && (is.null(options()$PlotTitles)
                 || options()$PlotTitles)) title(main = Title)
 	 }
+       }
     else
       {rd <- apply(r,c(2,3), FUN="var")^0.5
        tfplot(truth, truth + rd, truth - rd,
@@ -875,7 +876,7 @@ tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfen
 		 xlab=NULL, 
 		 ylab=seriesNames(factors(x$truth)), 
 		 xlim = NULL, ylim = NULL,
-		 graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE,
+		 graphs.per.page=5, par=NULL, reset.screen=TRUE,
 		 diff.=FALSE,  percentChange.=FALSE,
                  PCcentered.=FALSE, summary.=TRUE) {
 
@@ -894,7 +895,7 @@ tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfen
         truth = true,
         Title = Title,
       ylab = seriesNames(true), remove.mean = FALSE, graphs.per.page = 5,
-       mar = par()$mar, reset.screen = TRUE, ...)
+       par = par, reset.screen = TRUE, ...)
       } 
    else {
       sm <- summaryStats(x)
@@ -911,7 +912,7 @@ tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfen
                 lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
                 xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 		graphs.per.page=graphs.per.page, 
-		par=par, mar=mar, reset.screen=reset.screen)
+		par=par, reset.screen=reset.screen)
     	  }
       else if(percentChange.){ # factor growth rates
           pc <- percentChange(true)
@@ -925,7 +926,7 @@ tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfen
                 lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
                 xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 		graphs.per.page=graphs.per.page, 
-		par=par, mar=mar, reset.screen=reset.screen)
+		par=par, reset.screen=reset.screen)
     	  }
       else if(PCcentered.){ # factor growth rates: bias (clearer picture?)
     	  growth <- percentChange(true)
@@ -938,7 +939,7 @@ tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfen
                 lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
                 xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 		graphs.per.page=graphs.per.page, 
-		par=par, mar=mar, reset.screen=reset.screen)
+		par=par, reset.screen=reset.screen)
           }
       else { # factors
           if(is.null(tf)) tf <- tframe(true)
@@ -951,7 +952,7 @@ tfplot.TSFmodelEstEval <- function(x, ...,  tf=NULL, start=tfstart(tf), end=tfen
                 lty=lty, lwd=lwd, pch=pch, col=col, cex=cex,
                 xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
 		graphs.per.page=graphs.per.page, 
-		par=par, mar=mar, reset.screen=reset.screen)
+		par=par, reset.screen=reset.screen)
     	  }
       }
    invisible(x)

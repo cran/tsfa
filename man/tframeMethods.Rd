@@ -19,13 +19,13 @@
 		 lty = 1:5, lwd = 1, pch = NULL, col = 1:6, cex = NULL,
 		 xlab = NULL, ylab = factorNames(x), xlim = NULL, ylim = NULL, 
 		 graphs.per.page = 5,
-                 par=NULL, mar = par()$mar, reset.screen = TRUE)
+                 par = NULL, reset.screen = TRUE)
    \method{tfplot}{TSFfactors}(x,..., tf=tfspan(x, ...), start=tfstart(tf), end=tfend(tf), 
 		 series=seq(nfactors(x)),
 		 Title="Estimated factors (dashed) and true (solid)", 
 		 lty = c("dashed", "solid"), lwd = 1, pch = NULL, col = 1:6, cex = NULL,
 		 xlab=NULL, ylab=factorNames(x), xlim = NULL, ylim = NULL, 
-		 graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE)
+		 graphs.per.page=5, par=NULL, reset.screen=TRUE)
    \method{tfplot}{TSFexplained}(x,..., tf=tfspan(x, ...), start=tfstart(tf), end=tfend(tf), 
 		 series=seq(nseries(x)),
 		 Title="Explained (dashed) and actual data (solid)", 
@@ -33,7 +33,7 @@
 		 xlab=NULL, 
 		 ylab=seriesNames(x), 
 		 xlim = NULL, ylim = NULL,
-		 graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE)
+		 graphs.per.page=5, par=NULL, reset.screen=TRUE)
    \method{tfplot}{TSFmodelEstEval}(x, ...,  tf=NULL, start=tfstart(tf), end=tfend(tf), 
 		 series=seq(nseries(factors(x))),
 		 Title="Monte Carlo Results", 
@@ -42,7 +42,7 @@
 		 xlab=NULL, 
 		 ylab=seriesNames(factors(x$truth)), 
 		 xlim = NULL, ylim = NULL,
-		 graphs.per.page=5, par=NULL, mar=par()$mar, reset.screen=TRUE,
+		 graphs.per.page=5, par=NULL, reset.screen=TRUE,
 		 diff.=FALSE,  percentChange.=FALSE, 
 		 PCcentered.=FALSE, summary.=TRUE)
 
@@ -78,7 +78,6 @@
     \item{ylim}{See generic tfplot method}
     \item{graphs.per.page}{See generic tfplot method}
     \item{par}{See generic tfplot method}
-    \item{mar}{See generic tfplot method}
     \item{reset.screen}{See generic tfplot method}
     \item{...}{other objects to plot (currently unused).}
 }
