@@ -1,3 +1,8 @@
+Changes in tsfa version 2014.2-2
+
+   o	Removed generic loadings() since the only remaining method was doing 
+   	the same thing as the default.
+
 Changes in tsfa version 2014.2-1
 
    o	Changed tfplot.TSFfactors for changes to tfplot generic and default.

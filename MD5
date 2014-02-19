@@ -1,7 +1,7 @@
-dda777c8183b97e26387d640cea827cc *DESCRIPTION
-98a2685ad3e574e486683dab87981b05 *NAMESPACE
-1ae5ae2b076abea8167485b6ec9220a2 *NEWS
-04af17db3827d9158f55479127028d3e *R/tsfa.R
+4fa3e5745dd76c8ccd452948eb91ef6d *DESCRIPTION
+444b193b6200aaa90d3ecbc11de0f9c1 *NAMESPACE
+7b172ea1c5b3a2e30fab5c6f19f8fce9 *NEWS
+f2edb183d2dc6c2ddf161319a371023a *R/tsfa.R
 9935656d345b331c72f40ee3ee86a106 *build/vignette.rds
 d8057ff9abd85cd2252ae6185e26c97f *demo/00Index
 f9e6a11bce66b42cadcc810ad4b4db82 *demo/SOM-2005.R
@@ -9,7 +9,7 @@ f9e6a11bce66b42cadcc810ad4b4db82 *demo/SOM-2005.R
 17339f095b5d9c64360b761c907cb5c3 *inst/CITATION
 471a9add77568862dc771f7848faa77c *inst/doc/Guide.R
 8ce12537bd04b5f98584afea32fe102e *inst/doc/Guide.Stex
-0ffcdb75701d7f13433b62080e06d8cf *inst/doc/Guide.pdf
+7d2dfe17b57477d59921de706de3a65d *inst/doc/Guide.pdf
 d1caec11720c5dd65a50ed631f004681 *man/00.tsfa.Intro.Rd
 34ea12cb51cba6ec32f998b84487402c *man/FAfitStats.Rd
 4c378d3df6fbe47b9301a39050a34436 *man/FAmodel.Rd
@@ -23,7 +23,7 @@ fa19a959fc71970f4fd0cdf121cacca5 *man/checkResiduals.Rd
 7b645a3eeb9c1b95d7229cc3b4e24ee1 *man/explained.Rd
 c93fea8a11f6f2268a5d38df22aa3bc9 *man/factorNames.Rd
 4e402d6f1ace0c7dce421b71f561aca4 *man/factors.Rd
-fc98d1549ea90d759b605ab714b0a2ea *man/loadings.Rd
+656f3459175f312f843e3e9f4ad6ce4b *man/loadings.Rd
 f6f3c84d8bfba45b604ea350ea5c91d7 *man/nfactors.Rd
 4bb1ece5619724ca8f3e1dea05ab33d3 *man/permusign.Rd
 0871296e4551de9ea4be352e6671b67a *man/predict.Rd

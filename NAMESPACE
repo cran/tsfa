@@ -19,10 +19,6 @@ S3method("predict", "FAmodel")
 
 #S3method("simulate", "FAmodel")
 
-export("loadings")
-S3method("loadings", "default")
-S3method("loadings", "FAmodel")
-
 export("factors")
 S3method("factors", "fFAmodel")
 

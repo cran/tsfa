@@ -25,16 +25,6 @@ FAmodel.default <- function(obj,  Omega=NULL, Phi=NULL, LB=NULL, LB.std=NULL,
   }
 
 
-# I don't think this exists really works for namespaces
-# The if also seems to cause some problems for codoc
-#if (!exists("loadings.default", mode="function")){
-  loadings.default  <- stats::loadings
-  loadings <- function(x)UseMethod("loadings")
-#  }
-
-loadings.FAmodel <- function(x)x$loadings
-#loadings.fFAmodel <- function(x) NextMethod(x)
-
 factors <- function(x)UseMethod("factors")
 # use predict with data to get factors
 factors.fFAmodel <- function(x) x$f
