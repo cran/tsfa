@@ -295,7 +295,7 @@ simulate.TSFmodel <- function(model, f=factors(model), Cov=model$Omega, sd=NULL,
       stop("One of Cov, sd, noise, or noise.model, must be specified.")
 
     p <- nrow(loadings(model))
-    noise <- makeTSnoise(Tobs(f), p, 1, noise=noise, rng=rng,
+    noise <- dse::makeTSnoise(Tobs(f), p, 1, noise=noise, rng=rng,
                         Cov=Cov, sd=sd, noise.model=noise.model)
 
     #use the calculation in explained but discard the class setting
