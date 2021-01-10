@@ -101,7 +101,7 @@
   Gilbert, Paul D. and Meijer, Erik (2005)
   Time Series Factor Analaysis with an Application to Measuring Money.
   Research Report 05F10, University of Groningen, SOM Research School.
-  Available from \url{http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/}.
+  Available from \url{https://hdl.handle.net/11370/d7d4ea3d-af1d-487a-b9b6-c0816994ef5a}.
   }
 \examples{
   data("WansbeekMeijer", package="GPArotation")

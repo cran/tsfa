@@ -1,4 +1,8 @@
-importFrom("stats","loadings")
+# importing all of stats clobbers dse simulate
+importFrom("stats", "loadings", "cov", "cor", "factanal", 
+       "pchisq", "density", "start", "end")
+
+importFrom("graphics", "matplot", "title", "par")
 
 import("setRNG")
 import("GPArotation")

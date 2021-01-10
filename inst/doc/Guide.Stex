@@ -1,4 +1,5 @@
 \documentclass[english]{article}
+\usepackage{url}
 \begin{document}
 
 %\VignetteIndexEntry{tsfa Guide}
@@ -566,7 +567,7 @@ tfplot(ytoypc(f), ytoypc(cbind(M1, M2pp)), graphs.per.page=2,
 \section{References}
   Paul D. Gilbert and Erik Meijer, (2006) "Money and Credit Factors",
   Bank of Canada  Working Paper 2006-3, available at
-  \verb <http://www.bankofcanada.ca/2006/03/publications/research/working-paper-2006-3/> .
+  \url{https://www.bankofcanada.ca/2006/03/working-paper-2006-3}.
 
   
   Paul D. Gilbert and Erik Meijer, (2005) 
@@ -574,6 +575,5 @@ tfplot(ytoypc(f), ytoypc(cbind(M1, M2pp)), graphs.per.page=2,
   Research Report 05F10, University of Groningen, SOM Research School,
   available at 
   
-  \verb <http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/> .
-
+  \url{https://hdl.handle.net/11370/d7d4ea3d-af1d-487a-b9b6-c0816994ef5a}.
 \end{document}

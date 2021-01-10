@@ -6,12 +6,12 @@ citEntry(entry="techreport",
   title =     "Time Series Factor Analaysis with an Application to Measuring Money",
   number      = "05F10",
   institution = "University of Groningen, SOM Research School",
-  url  = "http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/",
+  url  = "https://hdl.handle.net/11370/d7d4ea3d-af1d-487a-b9b6-c0816994ef5a",
   
   textVersion = 
      paste("Gilbert, Paul D. and Meijer, Erik  ", 
        "Time Series Factor Analaysis with an Application to Measuring Money, ",
         "Research Report 05F10, University of Groningen, SOM Research School.",
-         "Available from <http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/>",
+         "Available from <https://hdl.handle.net/11370/d7d4ea3d-af1d-487a-b9b6-c0816994ef5a>",
          sep="")
   )

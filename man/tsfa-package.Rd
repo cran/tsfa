@@ -49,10 +49,11 @@ Maintainer: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
   Gilbert, Paul D. and Meijer, Erik (2005)
   Time Series Factor Analaysis with an Application to Measuring Money.
   Research Report 05F10, University of Groningen, SOM Research School.
-  Available from \url{http://som.eldoc.ub.rug.nl/reports/themeF/2005/05F10/}.
+  Available from \url{https://hdl.handle.net/11370/d7d4ea3d-af1d-487a-b9b6-c0816994ef5a}.
 
   Gilbert, Paul D. and Meijer, Erik (2006) Money and Credit Factors.
-  Bank of Canada Working Paper 2006-3, available at \url{http://www.bankofcanada.ca/2006/03/publications/research/working-paper-2006-3/}.
+  Bank of Canada Working Paper 2006-3, available at
+\url{https://www.bankofcanada.ca/2006/03/working-paper-2006-3/}.
 }
 \keyword{ package }
 \keyword{ ts }
